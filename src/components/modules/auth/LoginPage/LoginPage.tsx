@@ -2,12 +2,6 @@ import Link from "next/link";
 import LoginForm from "./LoginForm";
 
 export default function LoginPage() {
-  async function handleLogin(formData: FormData) {
-    "use server";
-    const email = formData.get("email");
-    const password = formData.get("password");
-    console.log("Logging in:", email);
-  }
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center bg-background selection:bg-primary selection:text-primary-foreground overflow-hidden">
@@ -42,7 +36,7 @@ export default function LoginPage() {
               <div className="h-px flex-1 bg-border" />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground font-medium italic">
-              "Every great film should seem new every time you see it."
+              Every great film should seem new every time you see it.
               <span className="block mt-2 text-primary not-italic text-[10px] font-bold uppercase tracking-widest">
                 — Roger Ebert
               </span>
@@ -65,7 +59,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <LoginForm loginAction={handleLogin} />
+            <LoginForm />
 
             <div className="mt-12 pt-8 border-t border-border/50 text-center">
               <p className="text-muted-foreground text-[11px] font-medium uppercase tracking-wider">

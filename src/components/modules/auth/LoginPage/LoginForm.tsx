@@ -2,25 +2,47 @@
 
 import { useTransition, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { loginUserAction } from "@/services/login";
 
-interface LoginFormProps {
-  loginAction: (formData: FormData) => Promise<void>;
-}
-
-export default function LoginForm({ loginAction }: LoginFormProps) {
+export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
     const formData = new FormData(event.currentTarget);
+
     startTransition(async () => {
-      await loginAction(formData);
+      try {
+        const result = await loginUserAction(formData);
+
+        if (result.success) {
+          // Success! Sync the session and move to dashboard
+          router.refresh();
+          router.push("/");
+        } else {
+          // Show the exact error from your Express backend (e.g., "User does not exist")
+          setError(result.message);
+        }
+      } catch (err) {
+        setError("Failed to connect to the server. Check your connection.");
+      }
     });
   };
 
   return (
     <div className="w-full">
+      {/* ERROR FEEDBACK */}
+      {error && (
+        <div className="mb-6 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-1">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-10">
         {/* EMAIL FIELD */}
         <div className="group relative space-y-2">
@@ -39,6 +61,7 @@ export default function LoginForm({ loginAction }: LoginFormProps) {
             type="email"
             placeholder="your@email.com"
             required
+            autoComplete="email"
             className="w-full bg-transparent border-b border-border py-3 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary transition-all font-medium"
           />
         </div>
@@ -54,12 +77,12 @@ export default function LoginForm({ loginAction }: LoginFormProps) {
             >
               Password
             </label>
-            <a
-              href="#"
-              className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+            <button
+              type="button"
+              className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
             >
               Forgot?
-            </a>
+            </button>
           </div>
 
           <div className="relative">
@@ -69,6 +92,7 @@ export default function LoginForm({ loginAction }: LoginFormProps) {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               required
+              autoComplete="current-password"
               className="w-full bg-transparent border-b border-border py-3 pr-10 text-sm text-foreground focus:outline-none focus:border-primary transition-all"
             />
             <button
@@ -105,6 +129,7 @@ export default function LoginForm({ loginAction }: LoginFormProps) {
             )}
           </button>
 
+          {/* Glow effect on hover */}
           <div className="absolute -bottom-4 left-0 right-0 h-px bg-primary/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </form>

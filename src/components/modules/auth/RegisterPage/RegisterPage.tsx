@@ -2,11 +2,6 @@ import Link from "next/link";
 import RegisterForm from "./RegisterForm";
 
 export default function RegisterPage() {
-  async function handleRegister(formData: FormData) {
-    "use server";
-    console.log("Processing registration...");
-  }
-
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center bg-background selection:bg-primary selection:text-primary-foreground overflow-hidden">
       {/* BACKGROUND EFFECTS */}
@@ -55,8 +50,8 @@ export default function RegisterPage() {
                 </span>
               </h2>
             </div>
-
-            <RegisterForm registerAction={handleRegister} />
+            {/* Register form  */}
+            <RegisterForm />
 
             <div className="mt-8 pt-6 border-t border-border/50 text-center">
               <p className="text-muted-foreground text-[11px] font-medium uppercase tracking-wider">
