@@ -2,7 +2,6 @@ import Link from "next/link";
 import LoginForm from "./LoginForm";
 
 export default function LoginPage() {
-
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center bg-background selection:bg-primary selection:text-primary-foreground overflow-hidden">
       {/* BACKGROUND ELEMENTS */}
@@ -80,7 +79,7 @@ export default function LoginPage() {
       <div className="absolute left-6 bottom-12 hidden xl:flex flex-col gap-10 items-center opacity-20">
         <div className="h-20 w-px bg-linear-to-t from-primary to-transparent" />
         <p className="[writing-mode:vertical-rl] text-[9px] font-black uppercase tracking-[0.6em] text-foreground">
-          Cinerate // Digital Archive
+          Cinerate Digital Archive
         </p>
       </div>
     </div>

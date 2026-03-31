@@ -1,13 +1,12 @@
 "use server";
-import { cookies } from "next/headers";
 
 export async function registerUserAction(formData: FormData) {
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const password = formData.get("password");
 
     try {
-        const response = await fetch("http://localhost:8000/api/auth/register", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-up/email`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, email, password }),
@@ -16,21 +15,10 @@ export async function registerUserAction(formData: FormData) {
         const result = await response.json();
 
         if (!response.ok) {
-            return { success: false, message: result.message };
+            return { success: false, message: result.message || "Registration failed" };
         }
-
-        // --- AUTOMATIC LOGIN LOGIC ---
-        // Save the token received from Express into Next.js Cookies
-        const cookieStore = await cookies();
-        cookieStore.set("accessToken", result.data.token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-        });
-
-        return { success: true, message: "Welcome!" };
+        return { success: true, message: "User registered successfully!" };
     } catch (error) {
-        return { success: false, message: "Connection error" };
+        return { success: false, message: "Server connection failed" };
     }
 }

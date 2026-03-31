@@ -2,22 +2,20 @@
 import { useTransition, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
-import { registerUserAction } from "@/services/register";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
-// 1. REGISTER THE VALIDATION SCHEMA
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
+    .regex(/[A-Z]/, "Uppercase required")
+    .regex(/[a-z]/, "Lowercase required")
+    .regex(/[0-9]/, "Number required"),
 });
 
-// Infer the type for our error state
 type RegisterInput = z.infer<typeof registerSchema>;
 type FieldErrors = Partial<Record<keyof RegisterInput, string>>;
 
@@ -27,7 +25,8 @@ export default function RegisterForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [serverMessage, setServerMessage] = useState<string | null>(null);
   const router = useRouter();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrors({});
     setServerMessage(null);
@@ -40,46 +39,61 @@ export default function RegisterForm() {
       const formattedErrors: FieldErrors = {};
       result.error.issues.forEach((issue) => {
         const path = issue.path[0] as keyof RegisterInput;
-        if (!formattedErrors[path]) {
-          formattedErrors[path] = issue.message;
-        }
+        formattedErrors[path] = issue.message;
       });
       setErrors(formattedErrors);
       return;
     }
 
-    // Transform data to lowercase
-    formData.set("name", (formData.get("name") as string).toLowerCase());
-    formData.set("email", (formData.get("email") as string).toLowerCase());
-   
-
-    // 4. Execute Server Action
+    // Execute Better Auth Sign Up
     startTransition(async () => {
-      try {
-        const response = await registerUserAction(formData);
-
-        if (response.success) {
-          setServerMessage("Account created! Redirecting...");
-          router.push("/login");
-          router.refresh();
-        } else {
-          setServerMessage(response.message);
-        }
-      } catch (err) {
-        setServerMessage("An unexpected error occurred.");
-      }
+      const { name, email, password } = result.data;
+      // Better Auth Client Call
+      const { data, error } = await authClient.signUp.email(
+        {
+          name,
+          email: email.toLowerCase(),
+          password: password,
+          callbackURL: "/login", 
+        },
+        {
+          // This ensures the browser handles the cookies sent by Express
+          onRequest: () => {
+          },
+          onSuccess: () => {
+            setServerMessage("Account created! Redirecting...");
+            router.push("/"); // Usually redirect to home/dashboard
+            router.refresh();
+          },
+          onError: (ctx) => {
+            setServerMessage(ctx.error.message || "Registration failed.");
+          },
+        },
+      );
     });
-  };;
+  };
+
   return (
     <div className="w-full">
+      {/* Show Server Message (Success or Error) */}
+      {serverMessage && (
+        <div
+          className={`p-3 mb-4 text-[10px] font-bold uppercase tracking-widest border ${
+            serverMessage.includes("success") ||
+            serverMessage.includes("Redirecting")
+              ? "border-green-500 text-green-500"
+              : "border-destructive text-destructive"
+          }`}
+        >
+          {serverMessage}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* FULL NAME */}
         <div className="group relative space-y-1">
           <div className="absolute -left-4 top-6 bottom-1 w-px bg-primary scale-y-0 group-focus-within:scale-y-100 transition-transform duration-500 origin-top" />
-          <label
-            className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground group-focus-within:text-primary transition-colors"
-            htmlFor="name"
-          >
+          <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground group-focus-within:text-primary transition-colors">
             Full Name
           </label>
           <input
@@ -90,19 +104,16 @@ export default function RegisterForm() {
             className="w-full bg-transparent border-b border-border py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-all font-medium"
           />
           {errors.name && (
-            <p className="text-[10px] text-destructive font-bold uppercase tracking-wider mt-1 animate-in fade-in slide-in-from-top-1">
+            <p className="text-[10px] text-destructive font-bold uppercase mt-1">
               {errors.name}
             </p>
           )}
         </div>
 
-        {/* EMAIL ADDRESS */}
+        {/* EMAIL */}
         <div className="group relative space-y-1">
           <div className="absolute -left-4 top-6 bottom-1 w-px bg-primary scale-y-0 group-focus-within:scale-y-100 transition-transform duration-500 origin-top" />
-          <label
-            className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground group-focus-within:text-primary transition-colors"
-            htmlFor="email"
-          >
+          <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground group-focus-within:text-primary transition-colors">
             Email
           </label>
           <input
@@ -113,7 +124,7 @@ export default function RegisterForm() {
             className="w-full bg-transparent border-b border-border py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-all font-medium"
           />
           {errors.email && (
-            <p className="text-[10px] text-destructive font-bold uppercase tracking-wider mt-1 animate-in fade-in slide-in-from-top-1">
+            <p className="text-[10px] text-destructive font-bold uppercase mt-1">
               {errors.email}
             </p>
           )}
@@ -122,10 +133,7 @@ export default function RegisterForm() {
         {/* PASSWORD */}
         <div className="group relative space-y-1">
           <div className="absolute -left-4 top-6 bottom-1 w-px bg-primary scale-y-0 group-focus-within:scale-y-100 transition-transform duration-500 origin-top" />
-          <label
-            className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground group-focus-within:text-primary transition-colors"
-            htmlFor="password"
-          >
+          <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground group-focus-within:text-primary transition-colors">
             Password
           </label>
           <div className="relative">
@@ -145,13 +153,13 @@ export default function RegisterForm() {
             </button>
           </div>
           {errors.password && (
-            <p className="text-[10px] text-destructive font-bold uppercase tracking-wider mt-1 animate-in fade-in slide-in-from-top-1">
+            <p className="text-[10px] text-destructive font-bold uppercase mt-1">
               {errors.password}
             </p>
           )}
         </div>
 
-        {/* SUBMIT BUTTON */}
+        {/* SUBMIT */}
         <div className="pt-2 relative">
           <button
             type="submit"
@@ -163,11 +171,6 @@ export default function RegisterForm() {
             >
               {isPending ? "Joining..." : "Create Account"}
             </span>
-            {isPending && (
-              <div className="absolute bottom-0 left-0 h-0.5 bg-primary-foreground/30 w-full overflow-hidden">
-                <div className="h-full bg-primary-foreground animate-progress w-1/3" />
-              </div>
-            )}
           </button>
         </div>
       </form>

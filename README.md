@@ -23,3 +23,57 @@ What’s Next?
 Since you love this Cinematic Editorial look, we can carry it over to the rest of the app.
 
 Would you like me to design the "Movie Discovery" page using this style, where the movie posters are laid out in a premium, asymmetrical grid?
+
+
+
+
+```
+cintube-frontend
+|___.next/
+|___node_modules/
+|___public/
+|___src/
+|     |___app/
+|     |     |___(RootLayout)/
+|     |     |      |___(auth)/
+|     |     |      |        |___login/
+|     |     |      |        |       |___page.tsx            #just returning LoginPage.tsx file 
+|     |     |      |        |___register/
+|     |     |      |                |___page.tsx            #just returning RegisterPage.tsx file
+|     |     |      |___movies/
+|     |     |      |        |___[...id]
+|     |     |      |                |___page.tsx
+|     |     |      |___layout.tsx
+|     |     |      |___page.tsx
+|     |     |___favicon.ico
+|     |     |___globals.css
+|     |     |___layout.tsx
+|     |___components/
+|     |     |___modules/
+|     |     |     |___auth/
+|     |     |     |     |___LoginPage/
+|     |     |     |     |       |___LoginPage.tsx
+|     |     |     |     |       |___LoginForm.tsx           #use-client for user interaction
+|     |     |     |     |___RegisterPage/
+|     |     |     |     |       |___RegisterPage.tsx
+|     |     |     |     |       |___RegisterForm.tsx        #use-client for user interaction
+|     |     |___shared/                 #shared ui file here (eg: nabbar,footer)
+|     |     |___ui/                     #shadcn ui components folder 
+|     |___lib/
+|     |___providers/
+|     |___services/
+|___.env
+|___.gitignore
+|___components.json
+|___eslint.config.mjs
+|___next-env.d.ts
+|___next.config.ts
+|___package.lock.json
+|___package.json
+|___postcss.config.mjs
+|___readme.md
+|___tsconfig.json
+
+
+
+```

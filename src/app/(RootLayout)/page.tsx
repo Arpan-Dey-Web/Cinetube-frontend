@@ -36,7 +36,7 @@ export default function Home() {
                 title="Dune: Part Two"
                 rating={9.2}
                 year="2024"
-                image="https://m.media-amazon.com/images/M/MV5BN2P2MjA0OGUtZWExOS00M2VjLTgzMjQtNjkwZTM2MjYwNTRiXkEyXkFqcGc@._V1_.jpg"
+                image="https://assets.bucketlistly.blog/sites/5adf778b6eabcc00190b75b1/content_entry5adf77af6eabcc00190b75b6/6075185986d092000b192d0a/files/best-free-travel-images-main-image-hd-op.webp"
                 category="Sci-Fi"
               />
               {/* More cards... */}
