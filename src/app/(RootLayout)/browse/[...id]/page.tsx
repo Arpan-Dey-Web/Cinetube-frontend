@@ -12,7 +12,7 @@ export default async function MovieDetails({
 }) {
   const { id } = await params;
   const movie = await movieService.getMovieById(id);
-
+  console.log(movie);
   if (!movie) return notFound();
 
   const movieData = {

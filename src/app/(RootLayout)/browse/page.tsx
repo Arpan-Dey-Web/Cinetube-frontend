@@ -62,7 +62,7 @@ export default async function BrowsePage() {
         </div>
 
         {/* 4. MOVIE GRID - NOW DYNAMIC */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-x-8 gap-y-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-16">
           {movies.map((movie) => (
             <MovieCard
               key={movie.id}
