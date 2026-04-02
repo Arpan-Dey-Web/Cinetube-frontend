@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
 import { Play, Info, Star } from "lucide-react";
 
 export const Hero = () => {

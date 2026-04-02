@@ -33,13 +33,13 @@ export default function Home() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-8 gap-y-12">
               <MovieCard
+                id="56675745847545454"
                 title="Dune: Part Two"
                 rating={9.2}
                 year="2024"
                 image="https://assets.bucketlistly.blog/sites/5adf778b6eabcc00190b75b1/content_entry5adf77af6eabcc00190b75b6/6075185986d092000b192d0a/files/best-free-travel-images-main-image-hd-op.webp"
                 category="Sci-Fi"
               />
-              {/* More cards... */}
             </div>
           </div>
 

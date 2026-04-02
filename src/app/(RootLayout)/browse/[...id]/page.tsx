@@ -1,52 +1,50 @@
-"use client";
-import React from "react";
-// import { Play, Plus, Star, Calendar, Clock, User, Film } from "lucide-react";
-// import { Button } from "@/components/ui/button";
-// import { Badge } from "@/components/ui/badge";
-// import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { movieService } from "@/services/module/movie/movie.service";
 import { ReviewSection } from "@/components/modules/MoviePage/ReviewSection";
 import { MovieHero } from "@/components/modules/MoviePage/MovieHero";
 import { VideoPlayer } from "@/components/modules/MoviePage/VideoPlayer";
 import { MovieSidebar } from "@/components/modules/MoviePage/MovieSidebar";
+import { notFound } from "next/navigation";
 
-// MOCK DATA (This is what your Backend will eventually send)
-const MOCK_MOVIE = {
-  id: "1",
-  title: "Inception",
-  description:
-    "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-  director: "Christopher Nolan",
-  cast: ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page"],
-  year: "2010",
-  duration: "2h 28m",
-  rating: 8.8,
-  genres: ["Sci-Fi", "Action", "Adventure"],
-  backdrop:
-    "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070",
-  poster:
-    "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg",
-  trailerUrl: "https://www.youtube.com/embed/8hP9D6kZseM",
-};
+export default async function MovieDetails({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = await params;
+  const movie = await movieService.getMovieById(id);
 
-export default function MovieDetails() {
+  if (!movie) return notFound();
+
+  const movieData = {
+    ...movie,
+    backdrop: movie.backdropUrl,
+    poster: movie.posterUrl,
+  };
+
   return (
-    <main className="container mx-autoe">
-      {/* Section 1: Hero & Metadata (Already built) */}
-      <MovieHero data={MOCK_MOVIE} />
+    <main className="min-h-screen bg-background">
+      <MovieHero data={movieData} />
 
-      <div className="container grid grid-cols-1 lg:grid-cols-3 gap-12 py-12">
-        {/* Main Column */}
+      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 py-12 px-4 md:px-8">
         <div className="lg:col-span-2 space-y-16">
-          {/* Section 2: Video Player (Already built) */}
-          <VideoPlayer url={MOCK_MOVIE.trailerUrl} />
+          <section id="video-player" className="scroll-mt-24">
+            <VideoPlayer
+              streamingUrl={movieData.streamingUrl}
+              hasAccess={movieData.hasAccess}
+            />
+          </section>
 
-          {/* Section 3: Review & Rating (The one I just gave you) */}
-          <ReviewSection />
+          <ReviewSection movieId={id} initialReviews={movie.reviews || []} />
         </div>
 
-        {/* Sidebar */}
         <aside>
-          <MovieSidebar cast={MOCK_MOVIE.cast} />
+          <MovieSidebar
+            cast={movieData.cast}
+            director={movieData.director}
+            status={movieData.status}
+            price={movieData.price}
+            hasAccess={movieData.hasAccess}
+          />
         </aside>
       </div>
     </main>

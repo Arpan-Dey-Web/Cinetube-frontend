@@ -1,71 +1,127 @@
-import { Star, Calendar, Clock, Play, Plus } from "lucide-react";
+"use client";
+import { Star, Calendar, Clock, Play, Plus, ShieldAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export const MovieHero = ({ data }: { data: any }) => (
-  <div className="relative h-[65vh] w-full overflow-hidden flex items-end">
-    {/* Backdrop with Blur & Overlay */}
-    <div
-      className="absolute inset-0 bg-cover bg-center scale-105 blur-[2px] opacity-40 transition-all duration-1000"
-      style={{ backgroundImage: `url(${data.backdrop})` }}
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+interface MovieData {
+  id: string;
+  tmdbId: number;
+  title: string;
+  description: string;
+  director: string;
+  cast: string[];
+  year: string;
+  duration: string;
+  rating: number;
+  genres: string[];
+  posterUrl: string;
+  backdropUrl: string;
+  trailerUrl: string;
+  streamingUrl: null;
+  platform: string;
+  status: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  isPublished: true;
+  isTrending: false;
+  reviews: [];
+  hasAccess: true;
+  backdrop: string;
+  poster: string;
+}
 
-    <div className="container relative z-10 mx-auto px-4 pb-12 flex flex-col md:flex-row gap-8 items-end">
-      {/* Poster */}
-      <div className="hidden md:block w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-border/50 transform -rotate-1">
-        <img
-          src={data.poster}
-          alt={data.title}
-          className="w-full h-full object-cover"
-        />
-      </div>
+export const MovieHero = ({ data }: { data: MovieData }) => {
+  return (
+    <div className="relative h-[70vh] w-full overflow-hidden flex items-end">
+      {/* Backdrop with Blur & Overlay */}
+      <div
+        className="absolute inset-0 bg-cover bg-center scale-105 blur-[2px] opacity-40 transition-all duration-1000"
+        style={{ backgroundImage: `url(${data.backdrop})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
-      {/* Content */}
-      <div className="flex-1 space-y-6">
-        <div className="flex flex-wrap gap-2">
-          {data.genres.map((g: string) => (
-            <Badge
-              key={g}
-              className="bg-primary/20 text-primary border-primary/30 backdrop-blur-md uppercase tracking-tighter"
-            >
-              {g}
+      <div className="container relative z-10 mx-auto px-4 pb-12 flex flex-col md:flex-row gap-8 items-end">
+        {/* Poster */}
+        <div className="hidden md:block w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-border/50 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
+          <img
+            src={data.poster}
+            alt={data.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 space-y-6">
+          <div className="flex flex-wrap gap-2">
+            <Badge className="bg-primary text-primary-foreground font-bold italic tracking-tighter">
+              {data.status}
             </Badge>
-          ))}
-        </div>
-
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase text-foreground">
-          {data.title}
-        </h1>
-
-        <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-muted-foreground uppercase tracking-widest">
-          <div className="flex items-center gap-1.5 text-primary">
-            <Star className="h-5 w-5 fill-primary" /> {data.rating}
+            {data.genres.map((g: string) => (
+              <Badge
+                key={g}
+                variant="outline"
+                className="bg-background/20 text-foreground border-border/50 backdrop-blur-md uppercase tracking-tighter"
+              >
+                {g}
+              </Badge>
+            ))}
           </div>
-          <div className="flex items-center gap-1.5">
-            <Calendar className="h-4 w-4" /> {data.year}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4" /> {data.duration}
-          </div>
-        </div>
 
-        <div className="flex flex-wrap gap-4 pt-2">
-          <Button
-            size="lg"
-            className="bg-primary text-primary-foreground hover:opacity-90 h-14 px-8 rounded-xl font-bold uppercase italic"
-          >
-            <Play className="mr-2 h-5 w-5 fill-current" /> Watch Now
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="h-14 px-8 rounded-xl border-border bg-background/50 backdrop-blur-sm font-bold uppercase tracking-widest"
-          >
-            <Plus className="mr-2 h-5 w-5" /> Watchlist
-          </Button>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase text-foreground">
+            {data.title}
+          </h1>
+
+          <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-muted-foreground uppercase tracking-widest">
+            <div className="flex items-center gap-1.5 text-primary">
+              <Star className="h-5 w-5 fill-primary" /> {data.rating}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Calendar className="h-4 w-4" /> {data.year}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-4 w-4" /> {data.duration}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-4 pt-2">
+            {/* Main Action Button */}
+            <Button
+              size="lg"
+              className="bg-primary text-primary-foreground hover:opacity-90 h-14 px-8 rounded-xl font-bold uppercase italic shadow-lg shadow-primary/20"
+              onClick={() => {
+                if (data.hasAccess) {
+                  document
+                    .getElementById("video-player")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                } else {
+                  document
+                    .getElementById("checkout-card")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+            >
+              {data.hasAccess ? (
+                <>
+                  <Play className="mr-2 h-5 w-5 fill-current" /> Watch Now
+                </>
+              ) : (
+                <>
+                  <ShieldAlert className="mr-2 h-5 w-5" /> Buy Premium
+                </>
+              )}
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-14 px-8 rounded-xl border-border bg-background/50 backdrop-blur-sm font-bold uppercase tracking-widest hover:bg-background"
+            >
+              <Plus className="mr-2 h-5 w-5" /> Watchlist
+            </Button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};

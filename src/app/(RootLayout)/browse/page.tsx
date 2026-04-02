@@ -12,9 +12,8 @@ interface Movie {
 }
 
 export default async function BrowsePage() {
-  const movies: Movie[] = await movieService.getAllMovies(); // Fetch movies from the service
-
-  console.log("Fetched Movies:", movies); // Debug log to check fetched data
+  const movies: Movie[] = await movieService.getAllMovies();
+  console.log(movies);
 
   return (
     <div className="relative min-h-screen bg-background">
@@ -29,8 +28,7 @@ export default async function BrowsePage() {
             <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-[0.8] text-foreground">
               Browse <br />
               <span className="text-transparent bg-clip-text bg-linear-to-b from-foreground to-foreground/20">
-                {" "}
-                Cinema.{" "}
+                Cinema.
               </span>
             </h1>
           </div>
@@ -68,11 +66,12 @@ export default async function BrowsePage() {
           {movies.map((movie) => (
             <MovieCard
               key={movie.id}
+              id={movie.id}
               title={movie.title}
               rating={movie.rating}
               year={movie.year}
-              image={movie.posterUrl} // Changed from image to posterUrl to match DB
-              category={movie.genres[0] || "Cinema"} // Takes the first genre
+              image={movie.posterUrl} 
+              category={movie.genres[0] || "Cinema"} 
             />
           ))}
         </div>
