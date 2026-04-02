@@ -1,25 +1,38 @@
 # 🎬 CineTube Frontend – Movie & Series Streaming Platform
 
-A modern and responsive frontend application for the **CineTube Movie & Series Portal**, built with **Next.js (App Router), TypeScript, and Tailwind CSS**. This application provides a seamless user experience for browsing, reviewing, and streaming movies.
+A production-ready, modern frontend application for the **CineTube Movie & Series Portal**, built using **Next.js (App Router), TypeScript, and Tailwind CSS**. The platform delivers a smooth, scalable, and high-performance experience for browsing, reviewing, and streaming movies and series.
 
 ---
 
-## 🚀 Live Links
+## 🚀 Live Demo
 
-* 🔗 Frontend Live: [https://cinetube-frontend-ten.vercel.app](https://cinetube-frontend-ten.vercel.app)
-* 🔗 Backend API: [https://cinetube-backend.vercel.app/](https://cinetube-backend.vercel.app/)
+* 🌐 **Frontend:** [https://cinetube-frontend-ten.vercel.app](https://cinetube-frontend-ten.vercel.app)
+* 🔌 **Backend API:** [https://cinetube-backend.vercel.app/](https://cinetube-backend.vercel.app/)
 
 ---
 
 ## 🧑‍💻 Tech Stack
 
-* **Framework:** Next.js (App Router)
-* **Language:** TypeScript
-* **Styling:** Tailwind CSS
-* **UI Components:** shadcn/ui
-* **State & Data Fetching:** Fetch / Custom services
-* **Authentication:** Better Auth (via backend)
-* **Deployment:** Vercel
+| Layer          | Technology                       |
+| -------------- | -------------------------------- |
+| Framework      | Next.js (App Router)             |
+| Language       | TypeScript                       |
+| Styling        | Tailwind CSS                     |
+| UI System      | shadcn/ui                        |
+| State Handling | Fetch API + Custom Service Layer |
+| Authentication | Better Auth (Backend-driven)     |
+| Payments       | Stripe Integration               |
+| Deployment     | Vercel                           |
+
+---
+
+## 🏗️ Architecture Overview
+
+* **App Router आधारित structure** for scalable routing
+* **Server Components** for performance optimization
+* **Client Components** for interactive UI (forms, actions)
+* **Service Layer abstraction** for API communication
+* **Modular folder structure** for maintainability
 
 ---
 
@@ -44,96 +57,104 @@ src/
  │   │   ├── auth/
  │   │   │   ├── LoginPage/
  │   │   │   └── RegisterPage/
- │   ├── shared/        # Navbar, Footer
- │   └── ui/            # shadcn components
+ │   ├── shared/        # Navbar, Footer, Layout UI
+ │   └── ui/            # shadcn reusable components
  │
- ├── lib/               # Utility logic
- ├── providers/         # Context providers
- ├── services/          # API calls
+ ├── lib/               # Utility functions & helpers
+ ├── providers/         # Context providers (Auth, Theme, etc.)
+ ├── services/          # API abstraction layer
 ```
 
 ---
 
-## 🔐 Authentication Flow
+## 🔐 Authentication System
 
-* Uses **Better Auth** via backend
-* Cookie-based session handling
-* Login & Register pages implemented with client components
-* OAuth support (Google, GitHub)
+* Backend-driven authentication using **Better Auth**
+* Secure **HTTP-only cookie-based sessions**
+* Supports:
+
+  * Email/password login & registration
+  * OAuth (Google, GitHub)
+* Protected routes using layout-level guards
 
 ---
 
 ## 🎯 Core Features
 
-### 🎬 Movie Browsing
+### 🎬 Movie & Series Browsing
 
-* View all movies/series
-* Dynamic movie details page (`/movies/[id]`)
-* Streaming support via embedded links
+* Browse all available content
+* Dynamic routing: `/movies/[id]`
+* Optimized server-side data fetching
+* Embedded streaming support
 
-### ⭐ Review System
+### ⭐ Review & Rating System
 
-* Add reviews with rating (1–10)
-* Like/unlike reviews
-* View approved reviews only
+* Submit reviews with rating (1–10)
+* Like / Unlike reviews
+* Moderation: Only approved reviews are visible
 
-### 📌 Watchlist
+### 📌 Watchlist System
 
-* Add/remove movies
-* Personalized user list
+* Add/remove movies to personal watchlist
+* User-specific data handling
 
 ### 💳 Payment Integration
 
-* Stripe-based subscription/payment flow
-* Unlock premium content
+* Stripe-powered subscription system
+* Unlock premium/protected content
 
-### 👤 Authentication
+### 👤 User Authentication
 
-* Login/Register pages
-* Protected routes
+* Secure login & registration flow
+* Session persistence using cookies
 
 ---
 
-## 🧩 UI Architecture
+## 🧩 UI & Component Strategy
 
-* **Server Components** → Page-level rendering (performance optimized)
-* **Client Components** → Forms & interactions (`use client`)
-* **Modular structure** → Feature-based separation
+* **Reusable UI system** powered by shadcn
+* **Feature-based modular components**
+* Separation of:
+  * Presentation layer
+  * Business logic (services)
 
 ---
 
 ## ⚙️ Installation & Setup
 
-### 1️⃣ Clone the repository
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/Arpan-Dey-Web/cinetube-frontend.git
 cd cinetube-frontend
 ```
 
-### 2️⃣ Install dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3️⃣ Setup environment variables
+### 3. Configure Environment Variables
+
+Create a `.env.local` file:
 
 ```env
 NEXT_PUBLIC_API_URL=https://cinetube-backend.vercel.app
 ```
 
----
-
-### 4️⃣ Run development server
+### 4. Run Development Server
 
 ```bash
 npm run dev
 ```
 
+App will be available at: `http://localhost:3000`
+
 ---
 
-## 📦 Build & Production
+## 📦 Production Build
 
 ```bash
 npm run build
@@ -142,40 +163,69 @@ npm start
 
 ---
 
-## 📜 NPM Scripts
+## 📜 Available Scripts
 
 ```bash
-npm run dev      # Development server
-npm run build    # Production build
-npm run start    # Run production
-npm run lint     # Lint code
+npm run dev      # Start development server
+npm run build    # Create production build
+npm run start    # Run production server
+npm run lint     # Run ESLint
 ```
 
 ---
 
-## 📱 Responsive Design
+## 📱 Responsiveness
 
-* Mobile-first approach
-* Fully responsive across devices
-* Optimized layouts using Tailwind CSS
+* Mobile-first design strategy
+* Fully responsive across:
+
+  * Mobile
+  * Tablet
+  * Desktop
+* Optimized layouts using Tailwind CSS utilities
 
 ---
 
-## 🔗 API Integration
+## 🔗 API Layer
 
-* Centralized API calls inside `/services`
-* Handles:
+All API interactions are centralized inside `/services`:
 
-  * Movies
-  * Reviews
-  * Auth
-  * Payments
+* Auth APIs
+* Movie APIs
+* Review APIs
+* Payment APIs
+
+Benefits:
+
+* Clean separation of concerns
+* Reusable API logic
+* Easier maintenance & scaling
+
+---
+
+## 🚀 Performance Considerations
+
+* Server Components reduce client bundle size
+* Optimized data fetching strategy
+* Lazy loading where applicable
+* Efficient routing with Next.js App Router
+
+---
+
+## 🧪 Future Improvements
+
+* 🔍 Advanced search & filtering
+* 🎥 Video player enhancement (custom player)
+* 📊 User dashboard (activity, watch history)
+* 🌐 Internationalization (i18n)
+* ⚡ Caching & performance optimizations
 
 ---
 
 ## ✨ Author
 
 **Arpan Dey**
+Frontend Developer (MERN Stack)
 
 * GitHub: [https://github.com/Arpan-Dey-Web](https://github.com/Arpan-Dey-Web)
 * Portfolio: [https://arpandeyweb.vercel.app](https://arpandeyweb.vercel.app)
@@ -184,6 +234,11 @@ npm run lint     # Lint code
 
 ## 💡 Final Notes
 
-This frontend is designed with scalability, performance, and clean architecture in mind. It demonstrates modern **Next.js App Router patterns**, modular component design, and real-world API integration.
+This project demonstrates real-world frontend engineering practices including:
 
-> Built for production-level MERN applications 🚀
+* Scalable architecture
+* Clean code organization
+* API-driven UI development
+* Modern Next.js patterns
+
+> Designed for production-grade applications 🚀
