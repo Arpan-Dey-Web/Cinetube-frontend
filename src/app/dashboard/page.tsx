@@ -7,6 +7,7 @@ import {
   TrendingUp,
   LayoutDashboard,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 // Mock Stats
@@ -108,7 +109,7 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center gap-6">
                     <div className="h-14 w-10 bg-muted overflow-hidden">
-                      <img
+                      <Image
                         src="https://m.media-amazon.com/images/M/MV5BN2P2MjA0OGUtZWExOS00M2VjLTgzMjQtNjkwZTM2MjYwNTRiXkEyXkFqcGc@._V1_.jpg"
                         className="h-full w-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all"
                         alt="movie"
@@ -116,7 +117,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-foreground">
-                        Rated "Dune: Part Two"
+                        Rated Dune Part Two
                       </p>
                       <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-widest mt-1">
                         2 hours ago // system_log_04
@@ -137,8 +138,8 @@ export default function DashboardPage() {
                 Elite Critic Access
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed italic mb-6">
-                "Your recent review of 'Oppenheimer' was cited in the top 5% of
-                the archive's intellectual contributions."
+                Your recent review of Oppenheimer was cited in the top 5% of
+                the archive intellectual contributions.
               </p>
               <button className="w-full py-3 border border-primary/30 text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
                 Upgrade Profile
