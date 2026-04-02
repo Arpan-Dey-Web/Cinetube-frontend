@@ -1,5 +1,5 @@
 import { MovieCard } from "@/components/modules/HomePage/MovieCard";
-import { movieService } from "@/services/module/movie/movie.service";
+import { movieService } from "@/services/modules/movie/movie.service";
 import { Search, SlidersHorizontal } from "lucide-react";
 
 interface Movie {
@@ -70,8 +70,8 @@ export default async function BrowsePage() {
               title={movie.title}
               rating={movie.rating}
               year={movie.year}
-              image={movie.posterUrl} 
-              category={movie.genres[0] || "Cinema"} 
+              image={movie.posterUrl}
+              category={movie.genres[0] || "Cinema"}
             />
           ))}
         </div>

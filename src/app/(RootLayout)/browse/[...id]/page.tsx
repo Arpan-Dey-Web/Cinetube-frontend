@@ -1,4 +1,4 @@
-import { movieService } from "@/services/module/movie/movie.service";
+import { movieService } from "@/services/modules/movie/movie.service";
 import { ReviewSection } from "@/components/modules/MoviePage/ReviewSection";
 import { MovieHero } from "@/components/modules/MoviePage/MovieHero";
 import { VideoPlayer } from "@/components/modules/MoviePage/VideoPlayer";
