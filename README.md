@@ -178,7 +178,6 @@ npm run lint     # Run ESLint
 
 * Mobile-first design strategy
 * Fully responsive across:
-
   * Mobile
   * Tablet
   * Desktop
@@ -225,7 +224,7 @@ Benefits:
 ## ✨ Author
 
 **Arpan Dey**
-Frontend Developer (MERN Stack)
+Full Stack Developer
 
 * GitHub: [https://github.com/Arpan-Dey-Web](https://github.com/Arpan-Dey-Web)
 * Portfolio: [https://arpandeyweb.vercel.app](https://arpandeyweb.vercel.app)
