@@ -1,29 +1,32 @@
 "use client";
+import Link from "next/link";
 import { useTransition, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { DEMO_ACCOUNTS } from "@/lib/site-content";
+import { AuthSocialButtons } from "../AuthSocialButtons";
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+  });
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setServerMessage(null);
 
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
     startTransition(async () => {
-      const { data, error } = await authClient.signIn.email(
+      await authClient.signIn.email(
         {
-          email: email.toLowerCase(),
-          password: password,
-          callbackURL: "/", // Redirect to home after login
+          email: formValues.email.toLowerCase(),
+          password: formValues.password,
+          callbackURL: "/",
         },
         {
           onSuccess: () => {
@@ -40,6 +43,14 @@ export default function LoginForm() {
     });
   };
 
+  const applyDemo = (account: (typeof DEMO_ACCOUNTS)[keyof typeof DEMO_ACCOUNTS]) => {
+    setFormValues({
+      email: account.email,
+      password: account.password,
+    });
+    setServerMessage(`${account.label} credentials applied.`);
+  };
+
   return (
     <div className="w-full max-w-md mx-auto">
       {serverMessage && (
@@ -54,6 +65,24 @@ export default function LoginForm() {
         </div>
       )}
 
+      <div className="mb-6 grid gap-3 sm:grid-cols-2">
+        {Object.values(DEMO_ACCOUNTS).map((account) => (
+          <button
+            key={account.email}
+            type="button"
+            onClick={() => applyDemo(account)}
+            className="border border-border bg-background px-4 py-3 text-left transition-colors hover:border-primary"
+          >
+            <span className="block text-[10px] font-black uppercase tracking-[0.25em] text-primary">
+              {account.label}
+            </span>
+            <span className="mt-1 block text-[11px] font-semibold text-foreground">
+              {account.email}
+            </span>
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="group relative space-y-1">
           <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">
@@ -63,6 +92,13 @@ export default function LoginForm() {
             name="email"
             type="email"
             required
+            value={formValues.email}
+            onChange={(event) =>
+              setFormValues((current) => ({
+                ...current,
+                email: event.target.value,
+              }))
+            }
             className="w-full bg-transparent border-b border-border py-2 text-sm focus:outline-none focus:border-primary transition-all"
           />
         </div>
@@ -76,6 +112,13 @@ export default function LoginForm() {
               name="password"
               type={showPassword ? "text" : "password"}
               required
+              value={formValues.password}
+              onChange={(event) =>
+                setFormValues((current) => ({
+                  ...current,
+                  password: event.target.value,
+                }))
+              }
               className="w-full bg-transparent border-b border-border py-2 text-sm focus:outline-none focus:border-primary transition-all"
             />
             <button
@@ -95,7 +138,18 @@ export default function LoginForm() {
         >
           {isPending ? "Verifying..." : "Login"}
         </button>
+
+        <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+          <span>Use demo buttons for quick review</span>
+          <Link href="/help" className="transition-colors hover:text-primary">
+            Need help?
+          </Link>
+        </div>
       </form>
+
+      <div className="mt-8">
+        <AuthSocialButtons />
+      </div>
     </div>
   );
 }

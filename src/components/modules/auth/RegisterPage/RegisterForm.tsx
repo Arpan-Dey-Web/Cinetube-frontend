@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { AuthSocialButtons } from "../AuthSocialButtons";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -24,6 +25,11 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -31,9 +37,7 @@ export default function RegisterForm() {
     setErrors({});
     setServerMessage(null);
 
-    const formData = new FormData(event.currentTarget);
-    const rawData = Object.fromEntries(formData);
-    const result = registerSchema.safeParse(rawData);
+    const result = registerSchema.safeParse(formValues);
 
     if (!result.success) {
       const formattedErrors: FieldErrors = {};
@@ -49,20 +53,17 @@ export default function RegisterForm() {
     startTransition(async () => {
       const { name, email, password } = result.data;
       // Better Auth Client Call
-      const { data, error } = await authClient.signUp.email(
+      const registrationResult = await authClient.signUp.email(
         {
           name,
           email: email.toLowerCase(),
           password: password,
-          callbackURL: "/login", 
+          callbackURL: "/login",
         },
         {
-          // This ensures the browser handles the cookies sent by Express
-          onRequest: () => {
-          },
           onSuccess: () => {
             setServerMessage("Account created! Redirecting...");
-            router.push("/"); // Usually redirect to home/dashboard
+            router.push("/");
             router.refresh();
           },
           onError: (ctx) => {
@@ -70,6 +71,8 @@ export default function RegisterForm() {
           },
         },
       );
+
+      console.log(registrationResult);
     });
   };
 
@@ -78,12 +81,11 @@ export default function RegisterForm() {
       {/* Show Server Message (Success or Error) */}
       {serverMessage && (
         <div
-          className={`p-3 mb-4 text-[10px] font-bold uppercase tracking-widest border ${
-            serverMessage.includes("success") ||
-            serverMessage.includes("Redirecting")
+          className={`p-3 mb-4 text-[10px] font-bold uppercase tracking-widest border ${serverMessage.includes("success") ||
+              serverMessage.includes("Redirecting")
               ? "border-green-500 text-green-500"
               : "border-destructive text-destructive"
-          }`}
+            }`}
         >
           {serverMessage}
         </div>
@@ -101,6 +103,13 @@ export default function RegisterForm() {
             name="name"
             type="text"
             placeholder="John Doe"
+            value={formValues.name}
+            onChange={(event) =>
+              setFormValues((current) => ({
+                ...current,
+                name: event.target.value,
+              }))
+            }
             className="w-full bg-transparent border-b border-border py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-all font-medium"
           />
           {errors.name && (
@@ -121,6 +130,13 @@ export default function RegisterForm() {
             name="email"
             type="email"
             placeholder="name@example.com"
+            value={formValues.email}
+            onChange={(event) =>
+              setFormValues((current) => ({
+                ...current,
+                email: event.target.value,
+              }))
+            }
             className="w-full bg-transparent border-b border-border py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-all font-medium"
           />
           {errors.email && (
@@ -142,6 +158,13 @@ export default function RegisterForm() {
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
+              value={formValues.password}
+              onChange={(event) =>
+                setFormValues((current) => ({
+                  ...current,
+                  password: event.target.value,
+                }))
+              }
               className="w-full bg-transparent border-b border-border py-2 pr-10 text-sm text-foreground focus:outline-none focus:border-primary transition-all"
             />
             <button
@@ -174,6 +197,10 @@ export default function RegisterForm() {
           </button>
         </div>
       </form>
+
+      <div className="mt-8">
+        <AuthSocialButtons />
+      </div>
     </div>
   );
 }
