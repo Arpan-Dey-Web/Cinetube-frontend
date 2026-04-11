@@ -9,6 +9,7 @@ export async function registerUserAction(formData: FormData) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-up/email`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ name, email, password }),
         });
 
@@ -18,7 +19,7 @@ export async function registerUserAction(formData: FormData) {
             return { success: false, message: result.message || "Registration failed" };
         }
         return { success: true, message: "User registered successfully!" };
-    } catch (error) {
+    } catch {
         return { success: false, message: "Server connection failed" };
     }
 }

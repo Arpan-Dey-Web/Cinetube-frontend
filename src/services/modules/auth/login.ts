@@ -5,15 +5,14 @@ export async function loginUserAction(formData: FormData) {
     const password = formData.get("password") as string;
 
     try {
-        // 1. MATCH YOUR BACKEND SCHEMA: { body: { email, password } }
         const payload = {
             email: email.toLowerCase(),
             password: password,
         };
-        // http://localhost:5000/api/auth/sign-in/email
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-in/email`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify(payload),
         });
 
@@ -42,7 +41,7 @@ export async function loginUserAction(formData: FormData) {
         }
 
         return { success: true };
-    } catch (err) {
+    } catch {
         return { success: false, message: "Backend is currently offline." };
     }
 }
