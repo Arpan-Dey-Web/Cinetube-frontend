@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -9,10 +10,12 @@ export const EditorsPicks = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[500px]">
       {/* Featured Large Card */}
       <div className="md:col-span-2 relative rounded-2xl overflow-hidden group cursor-pointer shadow-xl">
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925"
-          className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
           alt="Featured"
+          fill
+          sizes="(max-width: 768px) 100vw, 66vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-8 flex flex-col justify-end">
           <Badge className="w-fit mb-4 bg-primary uppercase">Must Watch</Badge>
@@ -36,14 +39,16 @@ export const EditorsPicks = () => (
             key={i}
             className="relative flex-1 rounded-2xl overflow-hidden group cursor-pointer"
           >
-            <img
+            <Image
               src={
                 i === 1
                   ? "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059"
                   : "https://images.unsplash.com/photo-1594908900066-3f47337549d8?q=80&w=2070"
               }
-              className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
               alt="Pick"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/40 p-4 flex items-end">
               <h4 className="text-white font-bold">

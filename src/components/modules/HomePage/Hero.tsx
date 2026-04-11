@@ -1,11 +1,10 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import { Play, Info, Star } from "lucide-react";
 
 export const Hero = () => {
   return (
-    <div className="relative h-[90vh] w-full overflow-hidden flex items-center bg-background">
+    <div className="relative h-[90vh] max-w-7xl mx-auto  overflow-hidden flex items-center bg-background">
       {/* 1. Cinematic Background with Noise Overlay */}
       <div className="absolute inset-0 z-0">
         <div

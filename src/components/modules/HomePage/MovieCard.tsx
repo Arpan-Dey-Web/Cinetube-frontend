@@ -1,5 +1,5 @@
-import { Star, Plus, Play } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import { Play, Star } from "lucide-react";
 import Link from "next/link";
 
 interface MovieProps {
@@ -26,10 +26,12 @@ export const MovieCard = ({
         <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-bottom" />
 
         <div className="relative aspect-[2/3] overflow-hidden bg-muted">
-          <img
+          <Image
             src={image}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 20vw"
+            className="object-cover transition-transform duration-700 grayscale-[0.2] group-hover:scale-110 group-hover:grayscale-0"
           />
 
           {/* Minimalist Hover State */}
