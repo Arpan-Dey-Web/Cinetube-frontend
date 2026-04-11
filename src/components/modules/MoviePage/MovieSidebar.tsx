@@ -1,18 +1,35 @@
-import { User, Video, Info, CreditCard, CheckCircle2 } from "lucide-react";
+import {
+  CheckCircle2,
+  CreditCard,
+  Info,
+  Star,
+  Timer,
+  Tv,
+  User,
+  Video,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 
 export const MovieSidebar = ({
   cast,
   director,
+  duration,
+  platform,
+  rating,
+  year,
   status,
   price,
   hasAccess,
 }: {
   cast: string[];
   director: string;
+  duration: string;
+  platform: string;
+  rating: number;
+  year: string;
   status: string;
-  price: number;
+  price?: number;
   hasAccess: boolean;
 }) => (
   <div
@@ -53,6 +70,38 @@ export const MovieSidebar = ({
 
     <Separator className="bg-border/50" />
 
+    <div>
+      <h4 className="mb-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
+        <Tv className="h-4 w-4" /> Key Information
+      </h4>
+      <div className="space-y-3 text-sm text-muted-foreground">
+        <div className="flex items-center justify-between">
+          <span>Platform</span>
+          <span className="font-semibold text-foreground">{platform}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Duration</span>
+          <span className="flex items-center gap-2 font-semibold text-foreground">
+            <Timer className="h-4 w-4 text-primary" />
+            {duration}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Rating</span>
+          <span className="flex items-center gap-2 font-semibold text-foreground">
+            <Star className="h-4 w-4 fill-primary text-primary" />
+            {rating}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Release</span>
+          <span className="font-semibold text-foreground">{year}</span>
+        </div>
+      </div>
+    </div>
+
+    <Separator className="bg-border/50" />
+
     {/* Access & Purchase Section */}
     <div className="pt-2">
       {status === "PREMIUM" && !hasAccess ? (
@@ -65,7 +114,7 @@ export const MovieSidebar = ({
               <p className="text-xs text-muted-foreground">Lifetime Access</p>
             </div>
             <span className="text-3xl font-black text-primary italic">
-              ${price}
+              ${price ?? 0}
             </span>
           </div>
 

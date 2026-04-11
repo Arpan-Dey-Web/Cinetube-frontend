@@ -1,37 +1,59 @@
 "use client";
-import { Star, Calendar, Clock, Play, Plus, ShieldAlert } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import {
+  Calendar,
+  Check,
+  Clock,
+  MessageSquare,
+  Play,
+  Plus,
+  ShieldAlert,
+  Star,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/provider/auth-provider";
+import { toggleWatchlistRequest } from "@/services/modules/watchlist/watchlist.client";
+import type { Movie, Review } from "@/types/types";
 
-interface MovieData {
-  id: string;
-  tmdbId: number;
-  title: string;
-  description: string;
-  director: string;
-  cast: string[];
-  year: string;
-  duration: string;
-  rating: number;
-  genres: string[];
-  posterUrl: string;
-  backdropUrl: string;
-  trailerUrl: string;
-  streamingUrl: null;
-  platform: string;
-  status: string;
-  price: number;
-  createdAt: string;
-  updatedAt: string;
-  isPublished: true;
-  isTrending: false;
-  reviews: [];
-  hasAccess: true;
+interface MovieData extends Movie {
   backdrop: string;
   poster: string;
+  reviews?: Review[];
 }
 
-export const MovieHero = ({ data }: { data: MovieData }) => {
+export const MovieHero = ({
+  data,
+  movieId,
+  initialInWatchlist,
+}: {
+  data: MovieData;
+  movieId: string;
+  initialInWatchlist: boolean;
+}) => {
+  const { user } = useAuth();
+  const [inWatchlist, setInWatchlist] = useState(initialInWatchlist);
+  const [watchlistBusy, setWatchlistBusy] = useState(false);
+
+  useEffect(() => {
+    setInWatchlist(initialInWatchlist);
+  }, [initialInWatchlist, movieId]);
+
+  const handleWatchlist = async () => {
+    if (!user || watchlistBusy) {
+      return;
+    }
+    setWatchlistBusy(true);
+    try {
+      await toggleWatchlistRequest(movieId);
+      setInWatchlist((previous) => !previous);
+    } catch {
+      // Request failed; state unchanged
+    } finally {
+      setWatchlistBusy(false);
+    }
+  };
   return (
     <div className="relative h-[70vh] w-full overflow-hidden flex items-end">
       {/* Backdrop with Blur & Overlay */}
@@ -43,11 +65,13 @@ export const MovieHero = ({ data }: { data: MovieData }) => {
 
       <div className="container relative z-10 mx-auto px-4 pb-12 flex flex-col md:flex-row gap-8 items-end">
         {/* Poster */}
-        <div className="hidden md:block w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-border/50 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
-          <img
+        <div className="relative hidden md:block w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-border/50 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
+          <Image
             src={data.poster}
             alt={data.title}
-            className="w-full h-full object-cover"
+            fill
+            sizes="256px"
+            className="object-cover"
           />
         </div>
 
@@ -115,9 +139,30 @@ export const MovieHero = ({ data }: { data: MovieData }) => {
             <Button
               size="lg"
               variant="outline"
-              className="h-14 px-8 rounded-xl border-border bg-background/50 backdrop-blur-sm font-bold uppercase tracking-widest hover:bg-background"
+              disabled={!user || watchlistBusy}
+              title={!user ? "Sign in to save to your watchlist" : undefined}
+              className="h-14 px-8 rounded-xl border-border bg-background/50 backdrop-blur-sm font-bold uppercase tracking-widest hover:bg-background disabled:opacity-60"
+              onClick={handleWatchlist}
             >
-              <Plus className="mr-2 h-5 w-5" /> Watchlist
+              {inWatchlist ? (
+                <Check className="mr-2 h-5 w-5" />
+              ) : (
+                <Plus className="mr-2 h-5 w-5" />
+              )}
+              {inWatchlist ? "Saved" : "Watchlist"}
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-14 px-8 rounded-xl border-border bg-background/50 backdrop-blur-sm font-bold uppercase tracking-widest hover:bg-background"
+              onClick={() =>
+                document
+                  .getElementById("reviews")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              <MessageSquare className="mr-2 h-5 w-5" /> Reviews
             </Button>
           </div>
         </div>
