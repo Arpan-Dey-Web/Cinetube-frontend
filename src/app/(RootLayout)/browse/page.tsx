@@ -1,28 +1,58 @@
-import { MovieCard } from "@/components/modules/HomePage/MovieCard";
-import { movieService } from "@/services/modules/movie/movie.service";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { BrowseMovieGrid } from "@/components/modules/BrowsePage/BrowseMovieGrid";
+import {
+  buildApiQueryFromBrowseSearchParams,
+  getInitialBrowseState,
+  serializeBrowseUrlParams,
+  type BrowseSearchParamsInput,
+} from "@/components/modules/BrowsePage/filter-utils";
+import { MOVIE_CATALOG } from "@/lib/movie-catalog";
+import {
+  movieService,
+  type MoviesListMeta,
+} from "@/services/modules/movie/movie.service";
+import { Movie } from "@/types/types";
 
-interface Movie {
-  id: string;
-  title: string;
-  rating: number;
-  year: string;
-  genres: string[];
-  posterUrl: string;
+async function getBrowseMovies(rawParams: BrowseSearchParamsInput): Promise<{
+  movies: Movie[];
+  meta: MoviesListMeta | null;
+  fromApi: boolean;
+}> {
+  const apiQuery = buildApiQueryFromBrowseSearchParams(rawParams);
+  try {
+    const { data, meta } = await movieService.getAllMovies(apiQuery);
+    if (Array.isArray(data) && meta && typeof meta.total === "number") {
+      return { movies: data, meta, fromApi: true };
+    }
+  } catch {
+    // Backend unavailable — static catalog + client-side filtering in the grid.
+  }
+  return { movies: MOVIE_CATALOG, meta: null, fromApi: false };
 }
 
-export default async function BrowsePage() {
-  const movies: Movie[] = await movieService.getAllMovies();
-  console.log(movies);
+export default async function BrowsePage({
+  searchParams,
+}: {
+  searchParams: Promise<BrowseSearchParamsInput>;
+}) {
+  const sp = await searchParams;
+  const { movies, meta, fromApi } = await getBrowseMovies(sp);
+  const initialBrowseState = getInitialBrowseState(sp);
+  const collectionCount = fromApi && meta ? meta.total : movies.length;
+  const syncKey = serializeBrowseUrlParams({
+    search: initialBrowseState.search,
+    filters: initialBrowseState.filters,
+    page: initialBrowseState.page,
+    limit: initialBrowseState.limit,
+  });
 
   return (
     <div className="relative min-h-screen bg-background">
-      {/* BACKGROUND ELEMENTS REMAIN THE SAME */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-40">
-        <div className="absolute top-[20%] -left-[5%] h-150 w-150 bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] -left-[5%] h-[500px] w-[500px] bg-primary/10 rounded-full blur-[120px]" />
       </div>
 
       <main className="relative z-10 container mx-auto px-6 lg:px-12 pt-32 pb-20">
+        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 border-b border-border/50 pb-10">
           <div className="space-y-4">
             <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-[0.8] text-foreground">
@@ -31,6 +61,10 @@ export default async function BrowsePage() {
                 Cinema.
               </span>
             </h1>
+            <p className="text-sm text-muted-foreground italic font-medium max-w-md">
+              Explore our full archive — search, filter by genre, rating, and
+              platform to find your next favourite film.
+            </p>
           </div>
 
           <div className="flex items-center gap-6">
@@ -39,49 +73,22 @@ export default async function BrowsePage() {
                 Collection Count
               </p>
               <p className="text-2xl font-black italic text-foreground tracking-tighter">
-                {movies.length.toString().padStart(3, "0")}
+                {String(collectionCount).padStart(3, "0")}
               </p>
             </div>
-            {/* Filter Toggle Button */}
-            <button className="h-14 w-14 border border-border flex items-center justify-center hover:bg-primary group transition-all duration-500">
-              <SlidersHorizontal className="h-5 w-5 text-foreground group-hover:text-primary-foreground" />
-            </button>
           </div>
         </div>
 
-        {/* 3. FILTER & SEARCH (Note: For real search, you'd move this to a Client Component) */}
-        <div className="flex flex-wrap items-center gap-x-10 gap-y-4 mb-12">
-          {/* Map your categories/filters here */}
-          <div className="relative group w-full md:w-64">
-            <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              placeholder="FILTER BY KEYWORD..."
-              className="w-full bg-transparent border-b border-border/50 py-2 pl-8 text-[9px] font-black tracking-widest uppercase outline-none"
-            />
-          </div>
-        </div>
-
-        {/* 4. MOVIE GRID - NOW DYNAMIC */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-16">
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              id={movie.id}
-              title={movie.title}
-              rating={movie.rating}
-              year={movie.year}
-              image={movie.posterUrl}
-              category={movie.genres[0] || "Cinema"}
-            />
-          ))}
-        </div>
-
-        {/* 5. FOOTER */}
-        <div className="mt-24 pt-12 border-t border-border/50 flex flex-col items-center gap-6">
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
-            End of Current Archive
-          </p>
-        </div>
+        {/* Grid with Filters */}
+        <BrowseMovieGrid
+          movies={movies}
+          initialSearch={initialBrowseState.search}
+          initialFilters={initialBrowseState.filters}
+          initialPage={initialBrowseState.page}
+          browseLimit={initialBrowseState.limit}
+          paginationMeta={meta}
+          urlSyncKey={syncKey}
+        />
       </main>
     </div>
   );

@@ -1,24 +1,34 @@
-import { ThemeProvider } from "@/provider/theme-provider";
+import { AuthProvider } from "@/provider/auth-provider";
+import { DashboardSidebar } from "@/components/modules/Dashboard/DashboardSidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { DashboardTopbar } from "@/components/modules/Dashboard/DashboardTopbar";
 
-export default function RootLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
+    <AuthProvider>
+      <SidebarProvider>
+        <DashboardSidebar />
+        <SidebarInset className="bg-background min-h-screen">
+          {/* Top bar */}
+          <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-4 border-b border-border bg-background/80 backdrop-blur-md px-6">
+            <SidebarTrigger className="text-muted-foreground hover:text-foreground -ml-1" />
+            <Separator orientation="vertical" className="h-5 bg-border" />
+            <div className="flex flex-1 items-center justify-between">
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground">
+                Command Center
+              </p>
+              <DashboardTopbar />
+            </div>
+          </header>
 
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+          <main className="flex-1 p-6 lg:p-8">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProvider>
   );
 }

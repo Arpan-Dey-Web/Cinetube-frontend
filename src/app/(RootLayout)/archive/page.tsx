@@ -1,7 +1,9 @@
-import { MovieCard } from "@/components/modules/HomePage/MovieCard";
-import { Search, SlidersHorizontal, ArrowUpRight } from "lucide-react";
+"use client";
 
-// Generated Mock Data for your Archive
+import { useMemo, useState } from "react";
+import { ArrowUpRight, Search, SlidersHorizontal } from "lucide-react";
+import { MovieCard } from "@/components/modules/HomePage/MovieCard";
+
 const ARCHIVE_DATA = [
   {
     id: "1",
@@ -77,19 +79,59 @@ const ARCHIVE_DATA = [
   },
 ];
 
+const FILTERS = [
+  "All Entries",
+  "Critically Acclaimed",
+  "Recently Digitized",
+  "Noir Collection",
+  "Sci-Fi",
+] as const;
+
 export default function ArchivePage() {
+  const [selectedFilter, setSelectedFilter] =
+    useState<(typeof FILTERS)[number]>("All Entries");
+  const [search, setSearch] = useState("");
+
+  const filteredArchive = useMemo(() => {
+    let result = [...ARCHIVE_DATA];
+
+    if (selectedFilter === "Noir Collection") {
+      result = result.filter((movie) => movie.category === "Noir");
+    }
+
+    if (selectedFilter === "Sci-Fi") {
+      result = result.filter((movie) => movie.category === "Sci-Fi");
+    }
+
+    if (selectedFilter === "Critically Acclaimed") {
+      result = result.filter((movie) => movie.rating >= 8.5);
+    }
+
+    if (selectedFilter === "Recently Digitized") {
+      result = result.filter((movie) => Number(movie.year) >= 2022);
+    }
+
+    if (search.trim()) {
+      const query = search.toLowerCase();
+      result = result.filter(
+        (movie) =>
+          movie.title.toLowerCase().includes(query) ||
+          movie.category.toLowerCase().includes(query),
+      );
+    }
+
+    return result;
+  }, [search, selectedFilter]);
+
   return (
     <div className="relative min-h-screen bg-background selection:bg-primary selection:text-primary-foreground">
-      {/* 1. ATMOSPHERIC BACKGROUND OVERLAY */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Grain texture using the data-uri fix we discussed */}
         <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E')]" />
-        <div className="absolute top-0 right-0 h-150 w-150 bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute right-0 top-0 h-150 w-150 rounded-full bg-primary/5 blur-[150px]" />
       </div>
 
-      <main className="relative z-10 container mx-auto px-6 lg:px-12 pt-32 pb-24">
-        {/* 2. BOLD EDITORIAL HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 border-b border-border/50 pb-12">
+      <main className="relative z-10 container mx-auto px-6 pb-24 pt-32 lg:px-12">
+        <div className="mb-20 flex flex-col gap-12 border-b border-border/50 pb-12 md:flex-row md:items-end md:justify-between">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="h-[1px] w-12 bg-primary" />
@@ -97,75 +139,79 @@ export default function ArchivePage() {
                 Master Index
               </span>
             </div>
-            <h1 className="text-[clamp(3rem,10vw,7rem)] font-black italic uppercase tracking-tighter leading-[0.75] text-foreground">
+            <h1 className="text-[clamp(3rem,10vw,7rem)] font-black uppercase tracking-tighter leading-[0.75] text-foreground">
               Film <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-b from-foreground to-foreground/20">
+              <span className="bg-linear-to-b from-foreground to-foreground/20 bg-clip-text text-transparent">
                 Archive.
               </span>
             </h1>
           </div>
 
-          {/* Technical Metadata Display */}
           <div className="flex items-center gap-8">
-            <div className="text-right hidden sm:block">
-              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+            <div className="hidden text-right sm:block">
+              <p className="mb-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground">
                 Index Status
               </p>
-              <p className="text-xl font-black text-foreground uppercase italic tracking-tighter">
-                Verified_2026
+              <p className="text-xl font-black uppercase tracking-tighter text-foreground">
+                Verified 2026
               </p>
             </div>
             <div className="h-16 w-px bg-border/50" />
             <div className="text-right">
-              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+              <p className="mb-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground">
                 File Count
               </p>
-              <p className="text-4xl font-black text-primary tracking-tighter italic leading-none">
-                0{ARCHIVE_DATA.length}
+              <p className="text-4xl font-black italic leading-none tracking-tighter text-primary">
+                {String(filteredArchive.length).padStart(2, "0")}
               </p>
             </div>
           </div>
         </div>
 
-        {/* 3. FUNCTIONAL UTILITIES (Filters & Search) */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 mb-16">
+        <div className="mb-16 flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
-            {[
-              "All Entries",
-              "Critically Acclaimed",
-              "Recently Digitized",
-              "Noir Collection",
-              "Sci-Fi",
-            ].map((tag, i) => (
+            {FILTERS.map((tag) => (
               <button
                 key={tag}
-                className={`group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] transition-all ${i === 0 ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                onClick={() => setSelectedFilter(tag)}
+                className={`group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] transition-all ${selectedFilter === tag
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {tag}
                 <ArrowUpRight
-                  className={`h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity ${i === 0 ? "opacity-100" : ""}`}
+                  className={`h-3 w-3 transition-opacity ${selectedFilter === tag ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    }`}
                 />
               </button>
             ))}
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="relative group w-full md:w-72">
-              <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <div className="group relative w-full md:w-72">
+              <Search className="absolute left-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
                 placeholder="SEARCH CATALOGUE..."
-                className="w-full bg-transparent border-b border-border/50 focus:border-primary py-2 pl-8 text-[9px] font-black tracking-widest uppercase outline-none transition-all placeholder:text-muted-foreground/30"
+                className="w-full border-b border-border/50 bg-transparent py-2 pl-8 text-[9px] font-black uppercase tracking-widest outline-none transition-all placeholder:text-muted-foreground/30 focus:border-primary"
               />
             </div>
-            <button className="p-3 border border-border hover:border-primary hover:bg-primary/5 transition-all">
+            <button
+              onClick={() => {
+                setSearch("");
+                setSelectedFilter("All Entries");
+              }}
+              className="border border-border p-3 transition-all hover:border-primary hover:bg-primary/5"
+            >
               <SlidersHorizontal className="h-4 w-4 text-foreground" />
             </button>
           </div>
         </div>
 
-        {/* 4. THE VAULT GRID */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-x-8 gap-y-20">
-          {ARCHIVE_DATA.map((movie) => (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-20 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+          {filteredArchive.map((movie) => (
             <MovieCard
               key={movie.id}
               id={movie.id}
@@ -176,20 +222,6 @@ export default function ArchivePage() {
               category={movie.category}
             />
           ))}
-        </div>
-
-        {/* 5. EDITORIAL FOOTER */}
-        <div className="mt-32 pt-16 border-t border-border/30 flex flex-col items-center">
-          <div className="h-1 w-1 bg-primary mb-8" />
-          <p className="text-[10px] font-black uppercase tracking-[0.6em] text-muted-foreground mb-6">
-            End of Index
-          </p>
-          <button className="group relative px-16 py-5 overflow-hidden border border-border">
-            <div className="absolute inset-0 bg-foreground translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-            <span className="relative z-10 text-[10px] font-black uppercase tracking-widest group-hover:text-background transition-colors">
-              Synchronize More Data
-            </span>
-          </button>
         </div>
       </main>
     </div>
