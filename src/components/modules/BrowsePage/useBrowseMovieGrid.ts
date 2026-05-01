@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { BrowseMovieGridProps } from "./browse-movie-grid.types";
 import {
   BROWSE_PAGE_SIZE,
@@ -17,7 +17,6 @@ export function useBrowseMovieGrid({
   initialPage = 1,
   browseLimit = BROWSE_PAGE_SIZE,
   paginationMeta = null,
-  urlSyncKey = "",
 }: BrowseMovieGridProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -28,13 +27,6 @@ export function useBrowseMovieGrid({
   const [filters, setFilters] = useState<FiltersState>(initialFilters);
   const [page, setPage] = useState(initialPage);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
-  useEffect(() => {
-    setSearchDraft(initialSearch);
-    setCommittedSearch(initialSearch);
-    setFilters(initialFilters);
-    setPage(initialPage);
-  }, [urlSyncKey, initialSearch, initialFilters, initialPage]);
 
   const pushBrowseUrl = useCallback(
     (next: { search: string; filters: FiltersState; page: number }) => {
