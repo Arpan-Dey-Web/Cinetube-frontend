@@ -46,8 +46,8 @@ export const MovieHero = ({
     }
     setWatchlistBusy(true);
     try {
-      await toggleWatchlistRequest(movieId);
-      setInWatchlist((previous) => !previous);
+      const result = await toggleWatchlistRequest(movieId);
+      setInWatchlist(result.added);
     } catch {
       // Request failed; state unchanged
     } finally {
