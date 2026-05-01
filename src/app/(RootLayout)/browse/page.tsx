@@ -81,6 +81,7 @@ export default async function BrowsePage({
 
         {/* Grid with Filters */}
         <BrowseMovieGrid
+          key={syncKey}
           movies={movies}
           initialSearch={initialBrowseState.search}
           initialFilters={initialBrowseState.filters}
