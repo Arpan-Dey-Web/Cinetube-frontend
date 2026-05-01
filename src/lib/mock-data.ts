@@ -339,6 +339,59 @@ export const MOCK_BLOG_POSTS: BlogPost[] = [
     readTime: "11 min read",
     category: "Directors",
   },
+
+  {
+    slug: "minimalist-sound-design",
+    title: "The Power of Silence: Minimalist Sound Design",
+    excerpt:
+      "Sometimes what you don't hear is more important than what you do. We analyze how modern horror and indie dramas use silence to build unbearable tension.",
+    coverImage:
+      "https://images.unsplash.com/photo-1478737270239-2fccd2c7862a?q=80&w=1740",
+    author: "Leo Sterling",
+    authorImage: "https://i.pravatar.cc/80?u=leo-sterling",
+    date: "April 28, 2026",
+    readTime: "6 min read",
+    category: "Technical",
+  },
+  {
+    slug: "cyberpunk-aesthetic-evolution",
+    title: "Neon Dreams: The Evolution of Cyberpunk Aesthetics",
+    excerpt:
+      "From the grimy rain-slicked streets of 1982 to the high-tech solar-punk hybrids of today, see how the visual identity of the future has shifted.",
+    coverImage:
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1740",
+    author: "Mina Aris",
+    authorImage: "https://i.pravatar.cc/80?u=mina-aris",
+    date: "April 22, 2026",
+    readTime: "10 min read",
+    category: "Design",
+  },
+  {
+    slug: "indie-film-renaissance",
+    title: "The 2026 Indie Film Renaissance",
+    excerpt:
+      "With high-end camera tech becoming more accessible, a new wave of filmmakers is bypassing the studio system. Here are the breakout hits of the year.",
+    coverImage:
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1740",
+    author: "Julian Thorne",
+    authorImage: "https://i.pravatar.cc/80?u=julian-thorne",
+    date: "April 15, 2026",
+    readTime: "8 min read",
+    category: "Industry",
+  },
+  {
+    slug: "color-theory-villains",
+    title: "Why Villains Wear Purple: Psychology of Cinema Color",
+    excerpt:
+      "Color palettes aren't just for style—they are emotional triggers. We break down the color theory behind Hollywood's most iconic protagonists and antagonists.",
+    coverImage:
+      "https://images.unsplash.com/photo-1493382076233-92072ff33db1?q=80&w=1740",
+    author: "Elena Rossi",
+    authorImage: "https://i.pravatar.cc/80?u=elena-rossi",
+    date: "April 10, 2026",
+    readTime: "5 min read",
+    category: "Theory",
+  }
 ];
 
 // TODO: fetch from backend → GET /api/admin/dashboard-stats
