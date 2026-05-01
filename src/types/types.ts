@@ -15,6 +15,7 @@ export interface Movie {
   genres: string[];
   posterUrl: string;
   backdropUrl: string;
+  trailerUrl?: string | null;
   streamingUrl?: string | null;
   platform: string;
   status: PriceType;
