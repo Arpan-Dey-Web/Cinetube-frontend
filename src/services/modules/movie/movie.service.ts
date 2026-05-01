@@ -1,6 +1,6 @@
 import { Movie } from "@/types/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export type MoviesListMeta = {
     page: number;
@@ -47,11 +47,14 @@ const getMovieById = async (id: string, cookieHeader?: string | null) => {
     }
 
     const res = await fetch(`${BASE_URL}/movie/${id}`, {
-        next: { revalidate: 60, tags: [`movie-${id}`] },
+        cache: "no-store",
         credentials: "include",
         headers: Object.keys(headers).length ? headers : undefined,
     });
-    if (!res.ok) return null;
+    if (res.status === 404) return null;
+    if (!res.ok) {
+        throw new Error(`Failed to fetch movie ${id}: ${res.status}`);
+    }
     const json = await res.json();
     return json.data;
 };
