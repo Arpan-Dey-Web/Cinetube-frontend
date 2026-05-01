@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   MessageSquare,
   Send,
@@ -162,9 +163,8 @@ export const ReviewSection = ({
     return (
       <div
         key={review.id}
-        className={`group rounded-2xl border border-border bg-card/40 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-card/80 ${
-          depth > 0 ? "ml-0 border-l-2 border-l-primary/30 md:ml-12" : ""
-        }`}
+        className={`group rounded-2xl border border-border bg-card/40 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-card/80 ${depth > 0 ? "ml-0 border-l-2 border-l-primary/30 md:ml-12" : ""
+          }`}
       >
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-4">
@@ -202,9 +202,8 @@ export const ReviewSection = ({
           {review.isSpoiler ? (
             <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4">
               <p
-                className={`text-muted-foreground transition-all duration-500 ${
-                  spoilerVisible ? "" : "select-none blur-md"
-                }`}
+                className={`text-muted-foreground transition-all duration-500 ${spoilerVisible ? "" : "select-none blur-md"
+                  }`}
               >
                 {review.comment}
               </p>
@@ -245,16 +244,32 @@ export const ReviewSection = ({
             <button
               type="button"
               disabled={!user || isPending}
-              title={!user ? "Sign in to like reviews" : undefined}
               onClick={() => likeReview(review.id)}
-              className={`group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-colors ${
-                review.likedByMe
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
-              } disabled:opacity-50`}
+              className={`group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 ${review.likedByMe
+                ? "text-yellow-500" // Changed to yellow
+                : "text-muted-foreground hover:text-yellow-400"
+                } disabled:opacity-50`}
             >
-              <ThumbsUp className="h-4 w-4 transition-transform group-hover:-translate-y-1" />
-              {review.likes} Appreciation
+              <motion.div
+                key={review.likedByMe ? "liked" : "unliked"}
+                initial={false}
+                animate={review.likedByMe ? { scale: [1, 1.4, 1], rotate: [0, -15, 0] } : { scale: 1 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+              >
+                <ThumbsUp
+                  className={`h-4 w-4 ${review.likedByMe ? "fill-yellow-500" : "fill-none"
+                    }`}
+                />
+              </motion.div>
+
+              <motion.span
+                key={review.likes}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="inline-block"
+              >
+                {review.likes} Like
+              </motion.span>
             </button>
             {depth === 0 && (
               <button
@@ -340,11 +355,10 @@ export const ReviewSection = ({
                 {[...Array(5)].map((_, index) => (
                   <Star
                     key={index}
-                    className={`h-4 w-4 ${
-                      index < Math.round(rating[0] / 2)
-                        ? "fill-primary text-primary"
-                        : "text-muted"
-                    }`}
+                    className={`h-4 w-4 ${index < Math.round(rating[0] / 2)
+                      ? "fill-primary text-primary"
+                      : "text-muted"
+                      }`}
                   />
                 ))}
               </div>
@@ -397,9 +411,8 @@ export const ReviewSection = ({
                   className="flex cursor-pointer items-center gap-2 text-xs font-bold uppercase"
                 >
                   <ShieldAlert
-                    className={`h-4 w-4 ${
-                      isSpoiler ? "text-red-500" : "text-muted-foreground"
-                    }`}
+                    className={`h-4 w-4 ${isSpoiler ? "text-red-500" : "text-muted-foreground"
+                      }`}
                   />
                   Contains Spoilers
                 </label>
