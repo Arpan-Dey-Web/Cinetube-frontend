@@ -9,6 +9,8 @@ import {
 } from "react";
 import { authClient } from "@/lib/auth-client";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
 // 1. Define the User type to match your Prisma + Better Auth
 interface User {
   id: string;
@@ -41,7 +43,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data } = await authClient.getSession();
 
       if (data && data?.user) {
-        setUser(data.user as unknown as User);
+        const sessionUser = data.user as unknown as User;
+
+        try {
+          const profileRes = await fetch(`${API_URL}/user/profile`, {
+            credentials: "include",
+            cache: "no-store",
+          });
+
+          if (profileRes.ok) {
+            const profileJson = await profileRes.json();
+            setUser(profileJson.data as User);
+          } else {
+            setUser(sessionUser);
+          }
+        } catch {
+          setUser(sessionUser);
+        }
       } else {
         setUser(null);
       }
