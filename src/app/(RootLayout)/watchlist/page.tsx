@@ -1,45 +1,107 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bookmark, Clock, PlayCircle, Trash2 } from "lucide-react";
 import { MovieCard } from "@/components/modules/HomePage/MovieCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/provider/auth-provider";
+import { toggleWatchlistRequest } from "@/services/modules/watchlist/watchlist.client";
+import {
+  getMyWatchlist,
+  type WatchlistEntry,
+} from "@/services/modules/watchlist/watchlist.service";
 
-const WATCHLIST_DATA = [
-  {
-    id: "1",
-    title: "Dune: Part Two",
-    rating: 9.2,
-    year: "2024",
-    category: "Sci-Fi",
-    image:
-      "https://m.media-amazon.com/images/M/MV5BN2P2MjA0OGUtZWExOS00M2VjLTgzMjQtNjkwZTM2MjYwNTRiXkEyXkFqcGc@._V1_.jpg",
-    addedDate: "MAR 28, 2026",
-  },
-  {
-    id: "3",
-    title: "Oppenheimer",
-    rating: 8.9,
-    year: "2023",
-    category: "Drama",
-    image:
-      "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzhmODhlNjMyMzI0XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg",
-    addedDate: "APR 01, 2026",
-  },
-  {
-    id: "5",
-    title: "Blade Runner 2049",
-    rating: 8.0,
-    year: "2017",
-    category: "Noir",
-    image:
-      "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODgzNjU3MzI@._V1_.jpg",
-    addedDate: "FEB 12, 2026",
-  },
-] as const;
+const formatAddedDate = (value: string) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  })
+    .format(new Date(value))
+    .toUpperCase();
+
+function WatchlistGridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div key={index} className="space-y-4">
+          <Skeleton className="aspect-[2/3] w-full" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-3 w-1/2" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function WatchListPage() {
-  const [watchlist, setWatchlist] = useState([...WATCHLIST_DATA]);
+  const { user, isPending } = useAuth();
+  const [watchlist, setWatchlist] = useState<WatchlistEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeMovieId, setActiveMovieId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isPending) {
+      return;
+    }
+
+    if (!user) {
+      setWatchlist([]);
+      setIsLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadWatchlist = async () => {
+      setIsLoading(true);
+
+      try {
+        const rows = await getMyWatchlist();
+        if (!cancelled) {
+          setWatchlist(rows);
+        }
+      } catch {
+        if (!cancelled) {
+          setWatchlist([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadWatchlist();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isPending, user]);
+
+  const handleRemove = async (movieId: string) => {
+    if (!user || activeMovieId) {
+      return;
+    }
+
+    setActiveMovieId(movieId);
+
+    try {
+      const result = await toggleWatchlistRequest(movieId);
+
+      if (!result.added) {
+        setWatchlist((current) =>
+          current.filter((item) => item.movieId !== movieId),
+        );
+      }
+    } catch {
+      // Request failed; state unchanged
+    } finally {
+      setActiveMovieId(null);
+    }
+  };
 
   const watchCount = useMemo(() => watchlist.length, [watchlist]);
 
@@ -90,17 +152,16 @@ export default function WatchListPage() {
           </div>
         </div>
 
-        {watchlist.length > 0 ? (
+        {isLoading ? (
+          <WatchlistGridSkeleton />
+        ) : watchlist.length > 0 ? (
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {watchlist.map((movie) => (
-              <div key={movie.id} className="group relative">
+            {watchlist.map((entry) => (
+              <div key={entry.id} className="group relative">
                 <button
-                  onClick={() =>
-                    setWatchlist((current) =>
-                      current.filter((item) => item.id !== movie.id),
-                    )
-                  }
-                  className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center border border-border bg-background/80 backdrop-blur-md opacity-0 transition-all hover:bg-destructive hover:text-white group-hover:opacity-100"
+                  disabled={activeMovieId === entry.movieId}
+                  onClick={() => handleRemove(entry.movieId)}
+                  className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center border border-border bg-background/80 backdrop-blur-md opacity-0 transition-all hover:bg-destructive hover:text-white disabled:pointer-events-none disabled:opacity-100 group-hover:opacity-100"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -108,21 +169,21 @@ export default function WatchListPage() {
                 <div className="pointer-events-none absolute bottom-0 top-0 -left-4 z-10 flex flex-col justify-between py-2">
                   <div className="h-1 w-1 bg-primary" />
                   <p className="rotate-180 text-[8px] font-black uppercase tracking-widest text-muted-foreground/40 [writing-mode:vertical-rl]">
-                    Added: {movie.addedDate}
+                    Added: {formatAddedDate(entry.createdAt)}
                   </p>
                 </div>
 
                 <MovieCard
-                  id={movie.id}
-                  title={movie.title}
-                  rating={movie.rating}
-                  year={movie.year}
-                  image={movie.image}
-                  category={movie.category}
+                  id={entry.movie.id}
+                  title={entry.movie.title}
+                  rating={entry.movie.rating}
+                  year={entry.movie.year}
+                  image={entry.movie.posterUrl}
+                  category={entry.movie.genres[0] || entry.movie.platform || "Movie"}
                 />
 
                 <Link
-                  href={`/browse/${movie.id}`}
+                  href={`/browse/${entry.movie.id}`}
                   className="mt-4 flex h-12 w-full items-center justify-center gap-3 border border-border text-[10px] font-black uppercase tracking-widest transition-all hover:border-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   <PlayCircle className="h-4 w-4" />
