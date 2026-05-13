@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { useAuth } from "@/provider/auth-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
 
 export const LogoutButton = () => {
