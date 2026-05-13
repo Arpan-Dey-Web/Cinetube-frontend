@@ -1,7 +1,7 @@
 "use client";
 import { Check } from "lucide-react";
 import { FAQ_ITEMS, PRICING_PLANS } from "@/lib/site-content";
-import { useAuth } from "@/provider/auth-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
