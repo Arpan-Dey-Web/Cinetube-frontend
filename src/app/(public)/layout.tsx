@@ -1,7 +1,7 @@
-import Footer from "@/components/shared/Footer";
-import Navbar from "@/components/shared/Navbar";
-import { AuthProvider } from "@/provider/auth-provider";
-import { StripeProvider } from "@/provider/StripeProvider";
+import Footer from "@/shared/components/Footer";
+import Navbar from "@/shared/components/Navbar";
+import { AuthProvider } from "@/providers/auth-provider";
+import { StripeProvider } from "@/providers/StripeProvider";
 
 export default function HomePageLayout({
   children,
