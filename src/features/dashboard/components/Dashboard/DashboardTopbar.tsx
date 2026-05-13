@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ChevronDown, User } from "lucide-react";
-import { useAuth } from "@/provider/auth-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import {
   DropdownMenu,

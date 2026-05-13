@@ -7,9 +7,8 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { MOCK_GENRE_DATA } from "@/lib/mock-data";
-
-// TODO: fetch from backend → GET /api/admin/analytics/genre-distribution
+import { useEffect, useState } from "react";
+import { movieService } from "@/features/movie/api/api";
 
 const chartConfig = {
   Drama: { label: "Drama", color: "var(--chart-1)" },
@@ -20,6 +19,23 @@ const chartConfig = {
 };
 
 export function GenreDonutChart() {
+  const [data, setData] = useState<{ genre: string; count: number; fill: string }[]>([]);
+
+  useEffect(() => {
+    movieService
+      .getMovieGenres()
+      .then((genres) =>
+        setData(
+          genres.map((genre, index) => ({
+            genre: genre.name,
+            count: genre.count,
+            fill: `var(--chart-${(index % 5) + 1})`,
+          })),
+        ),
+      )
+      .catch(() => setData([]));
+  }, []);
+
   return (
     <div className="p-6 border border-border bg-card/10 space-y-4">
       <div>
@@ -34,7 +50,7 @@ export function GenreDonutChart() {
       <ChartContainer config={chartConfig} className="h-56 w-full">
         <PieChart>
           <Pie
-            data={MOCK_GENRE_DATA}
+            data={data}
             dataKey="count"
             nameKey="genre"
             cx="50%"
@@ -43,7 +59,7 @@ export function GenreDonutChart() {
             outerRadius="80%"
             paddingAngle={2}
           >
-            {MOCK_GENRE_DATA.map((entry) => (
+            {data.map((entry) => (
               <Cell key={entry.genre} fill={entry.fill} />
             ))}
           </Pie>

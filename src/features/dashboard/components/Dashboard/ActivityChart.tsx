@@ -11,9 +11,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { MOCK_CHART_DATA } from "@/lib/mock-data";
-
-// TODO: fetch from backend → GET /api/admin/analytics/reviews-by-month
+import { useEffect, useState } from "react";
+import { dashboardService, MonthlySales } from "@/features/dashboard/api/api";
 
 const chartConfig = {
   reviews: {
@@ -23,6 +22,16 @@ const chartConfig = {
 };
 
 export function ActivityChart() {
+  const [data, setData] = useState<MonthlySales[]>([]);
+  const total = data.reduce((sum, month) => sum + month.salesCount, 0);
+
+  useEffect(() => {
+    dashboardService
+      .getAdminDashboardStats()
+      .then((stats) => setData(stats.monthlySales ?? []))
+      .catch(() => setData([]));
+  }, []);
+
   return (
     <div className="p-6 border border-border bg-card/10 space-y-4">
       <div className="flex items-center justify-between">
@@ -36,7 +45,7 @@ export function ActivityChart() {
         </div>
         <div className="text-right">
           <p className="text-2xl font-black italic tracking-tighter text-primary">
-            124.8K
+            {total}
           </p>
           <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
             Total
@@ -45,10 +54,10 @@ export function ActivityChart() {
       </div>
 
       <ChartContainer config={chartConfig} className="h-56 w-full">
-        <BarChart data={MOCK_CHART_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+        <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
           <XAxis
-            dataKey="month"
+            dataKey="label"
             tick={{ fontSize: 9, fontWeight: 900, fill: "var(--muted-foreground)" }}
             axisLine={false}
             tickLine={false}
@@ -60,7 +69,7 @@ export function ActivityChart() {
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Bar
-            dataKey="reviews"
+            dataKey="salesCount"
             fill="var(--primary)"
             radius={[2, 2, 0, 0]}
             maxBarSize={32}

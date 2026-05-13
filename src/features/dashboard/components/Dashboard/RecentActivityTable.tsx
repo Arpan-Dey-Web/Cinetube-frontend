@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,9 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Star, ChevronRight } from "lucide-react";
-import { MOCK_USER_REVIEWS } from "@/lib/mock-data";
-
-// TODO: fetch from backend → GET /api/review?userId=me&limit=5
+import { apiClient } from "@/shared/api/client";
+import type { Review } from "@/types/types";
 
 const STATUS_COLORS: Record<string, string> = {
   APPROVED: "bg-green-500/10 text-green-600 border-green-500/30",
@@ -20,6 +20,18 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function RecentActivityTable() {
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    apiClient
+      .get<Review[]>("/review", {
+        query: { userId: "me", limit: 5 },
+        cache: "no-store",
+      })
+      .then((response) => setReviews(response.data))
+      .catch(() => setReviews([]));
+  }, []);
+
   return (
     <div className="border border-border bg-card/10">
       <div className="flex items-center justify-between p-5 border-b border-border">
@@ -45,7 +57,13 @@ export function RecentActivityTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {MOCK_USER_REVIEWS.map((review) => (
+          {reviews.length === 0 ? (
+            <TableRow className="border-border">
+              <TableCell colSpan={5} className="py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+                No recent reviews
+              </TableCell>
+            </TableRow>
+          ) : reviews.map((review) => (
             <TableRow key={review.id} className="border-border hover:bg-card/30 transition-colors">
               <TableCell>
                 <p className="text-[10px] font-black uppercase tracking-wider text-foreground truncate max-w-[120px]">

@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/provider/auth-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { LogoutButton } from "@/components/ui/LogoutButton";
 
 const USER_MENU = [
