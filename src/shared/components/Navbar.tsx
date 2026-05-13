@@ -8,11 +8,13 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "../ui/ModeToggle";
-import { useAuth } from "@/provider/auth-provider";
-import { LogoutButton } from "../ui/LogoutButton";
+
+import { useAuth } from "@/providers/auth-provider";
+
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { PUBLIC_NAV_LINKS } from "@/lib/site-content";
+import { ModeToggle } from "@/components/ui/ModeToggle";
+import { LogoutButton } from "@/components/ui/LogoutButton";
 
 const Navbar = () => {
   const { user } = useAuth();
