@@ -1,10 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MOCK_CATEGORIES } from "@/lib/mock-data";
+import { movieService } from "@/features/movie/api/api";
+import type { Category } from "@/types/types";
 
-// TODO: fetch from backend → GET /api/movie/genres
+const genreImage =
+  "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1740";
 
-export function CategoriesSection() {
+export async function CategoriesSection() {
+  let categories: Category[] = [];
+  let error = false;
+
+  try {
+    categories = await movieService.getMovieGenres();
+  } catch {
+    error = true;
+  }
+
   return (
     <section className="container mx-auto px-6 lg:px-12 py-20">
       <div className="flex items-end justify-between border-b border-border pb-6 mb-12">
@@ -19,15 +30,20 @@ export function CategoriesSection() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {MOCK_CATEGORIES.map((cat) => (
+      {error ? (
+        <SectionState label="Unable to load genres" />
+      ) : categories.length === 0 ? (
+        <SectionState label="No genres available" />
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {categories.map((cat) => (
           <Link
             key={cat.id}
             href={`/browse?genre=${cat.slug}`}
             className="group relative aspect-[4/5] overflow-hidden"
           >
             <Image
-              src={cat.image}
+              src={cat.image || genreImage}
               alt={cat.name}
               fill
               sizes="(max-width: 1024px) 50vw, 16vw"
@@ -46,7 +62,16 @@ export function CategoriesSection() {
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
           </Link>
         ))}
-      </div>
+        </div>
+      )}
     </section>
+  );
+}
+
+function SectionState({ label }: { label: string }) {
+  return (
+    <div className="border border-border bg-card/20 p-10 text-center text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">
+      {label}
+    </div>
   );
 }

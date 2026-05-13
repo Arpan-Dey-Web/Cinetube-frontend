@@ -1,9 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { MOCK_BLOG_POSTS } from "@/lib/mock-data";
-
-// TODO: fetch from backend → GET /api/blog?limit=3&sort=date
+import { BLOG_POSTS } from "@/constants/blog-posts";
 
 export function BlogPreviewSection() {
   return (
@@ -21,7 +19,7 @@ export function BlogPreviewSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {MOCK_BLOG_POSTS.map((post, i) => (
+        {BLOG_POSTS.map((post, i) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}

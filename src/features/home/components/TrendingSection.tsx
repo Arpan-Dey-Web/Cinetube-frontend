@@ -1,12 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Star, TrendingUp } from "lucide-react";
-import { MOCK_TRENDING } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
+import { movieService } from "@/features/movie/api/api";
+import type { Movie } from "@/types/types";
 
-// TODO: fetch from backend → GET /api/movie?sort=rating&order=desc&limit=5
+export async function TrendingSection() {
+  let movies: Movie[] = [];
+  let error = false;
 
-export function TrendingSection() {
+  try {
+    movies = (await movieService.getAllMovies({ trending: true, limit: 5 })).data;
+  } catch {
+    error = true;
+  }
+
   return (
     <section className="container mx-auto px-6 lg:px-12 py-20">
       <div className="flex items-end justify-between border-b border-border pb-6 mb-12">
@@ -21,8 +29,13 @@ export function TrendingSection() {
         </div>
       </div>
 
+      {error ? (
+        <SectionState label="Unable to load trending movies" />
+      ) : movies.length === 0 ? (
+        <SectionState label="No trending movies available" />
+      ) : (
       <div className="space-y-px">
-        {MOCK_TRENDING.map((movie, index) => (
+        {movies.map((movie, index) => (
           <Link
             key={movie.id}
             href={`/browse/${movie.id}`}
@@ -78,6 +91,15 @@ export function TrendingSection() {
           </Link>
         ))}
       </div>
+      )}
     </section>
+  );
+}
+
+function SectionState({ label }: { label: string }) {
+  return (
+    <div className="border border-border bg-card/20 p-10 text-center text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">
+      {label}
+    </div>
   );
 }

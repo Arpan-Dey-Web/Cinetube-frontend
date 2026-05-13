@@ -1,9 +1,17 @@
 import { MovieCard } from "./MovieCard";
-import { MOCK_NEWLY_ADDED } from "@/lib/mock-data";
+import { movieService } from "@/features/movie/api/api";
+import type { Movie } from "@/types/types";
 
-// TODO: fetch from backend → GET /api/movie?sort=createdAt&order=desc&limit=8
+export async function NewlyAddedSection() {
+  let movies: Movie[] = [];
+  let error = false;
 
-export function NewlyAddedSection() {
+  try {
+    movies = (await movieService.getAllMovies({ "newly-added": true, limit: 8 })).data;
+  } catch {
+    error = true;
+  }
+
   return (
     <section className="container mx-auto px-6 lg:px-12 py-20">
       <div className="flex items-end justify-between border-b border-border pb-6 mb-12">
@@ -18,8 +26,13 @@ export function NewlyAddedSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
-        {MOCK_NEWLY_ADDED.map((movie) => (
+      {error ? (
+        <SectionState label="Unable to load new releases" />
+      ) : movies.length === 0 ? (
+        <SectionState label="No new releases available" />
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
+        {movies.map((movie) => (
           <MovieCard
             key={movie.id}
             id={movie.id}
@@ -30,7 +43,16 @@ export function NewlyAddedSection() {
             category={movie.genres[0] || "Cinema"}
           />
         ))}
-      </div>
+        </div>
+      )}
     </section>
+  );
+}
+
+function SectionState({ label }: { label: string }) {
+  return (
+    <div className="border border-border bg-card/20 p-10 text-center text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">
+      {label}
+    </div>
   );
 }

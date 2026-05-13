@@ -1,6 +1,33 @@
 import Image from "next/image";
 import { Quote } from "lucide-react";
-import { MOCK_TESTIMONIALS } from "@/lib/mock-data";
+import type { Testimonial } from "@/types/types";
+
+const TESTIMONIALS: Testimonial[] = [
+  {
+    id: "critic-1",
+    quote: "The catalogue feels curated instead of dumped into a grid.",
+    name: "Mina Roy",
+    role: "Verified Member",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300",
+    rating: 9,
+  },
+  {
+    id: "critic-2",
+    quote: "The review flow gives every title useful context before I press play.",
+    name: "Aria Lane",
+    role: "Community Critic",
+    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=300",
+    rating: 8,
+  },
+  {
+    id: "critic-3",
+    quote: "Premium titles, watchlists, and reviews sit together cleanly.",
+    name: "Leo Grant",
+    role: "Subscriber",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300",
+    rating: 9,
+  },
+];
 
 export function TestimonialsSection() {
   return (
@@ -16,7 +43,7 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {MOCK_TESTIMONIALS.map((t) => (
+          {TESTIMONIALS.map((t) => (
             <div
               key={t.id}
               className="group relative p-8 border border-border bg-card hover:border-primary transition-all duration-500 overflow-hidden"

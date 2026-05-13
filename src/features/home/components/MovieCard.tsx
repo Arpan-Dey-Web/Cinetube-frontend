@@ -1,6 +1,11 @@
+"use client";
+
 import Image from "next/image";
-import { Play, Star } from "lucide-react";
+import { BookmarkPlus, Play, Star } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { animations } from "@/design-system/animations";
 
 interface MovieProps {
   id: string;
@@ -9,6 +14,9 @@ interface MovieProps {
   year: string;
   image: string;
   category: string;
+  runtime?: string;
+  genres?: string[];
+  isPremium?: boolean;
 }
 
 export const MovieCard = ({
@@ -18,10 +26,16 @@ export const MovieCard = ({
   year,
   image,
   category,
+  runtime,
+  genres = [category],
+  isPremium,
 }: MovieProps) => {
   return (
     <Link href={`/browse/${id}`}>
-      <div className="group relative cursor-pointer">
+      <motion.div
+        whileHover={animations.cardHover}
+        className="group relative cursor-pointer"
+      >
         {/* Editorial Shadow/Focus Bar */}
         <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-bottom" />
 
@@ -36,14 +50,33 @@ export const MovieCard = ({
 
           {/* Minimalist Hover State */}
           <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
-            <div className="bg-primary h-12 w-12 rounded-full flex items-center justify-center mb-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-              <Play className="fill-primary-foreground text-primary-foreground h-5 w-5 ml-1" />
+            <div className="flex items-center gap-2 mb-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <span
+                aria-label={`Play trailer for ${title}`}
+                className="bg-primary h-11 w-11 rounded-full flex items-center justify-center"
+              >
+                <Play className="fill-primary-foreground text-primary-foreground h-4 w-4 ml-0.5" />
+              </span>
+              <span
+                aria-label={`Add ${title} to watchlist`}
+                className="bg-background/80 border border-border h-11 w-11 rounded-full flex items-center justify-center backdrop-blur"
+              >
+                <BookmarkPlus className="text-foreground h-4 w-4" />
+              </span>
             </div>
+            {isPremium ? (
+              <Badge className="mb-2 w-fit rounded-none text-[8px] font-black uppercase tracking-widest">
+                Premium
+              </Badge>
+            ) : null}
             <span className="text-[9px] font-black uppercase tracking-widest text-primary mb-1">
-              {category}
+              {genres.slice(0, 2).join(" / ") || category}
             </span>
             <p className="text-white text-lg font-black uppercase italic leading-none tracking-tighter">
               {title}
+            </p>
+            <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-white/70">
+              {runtime ? `${runtime} · ` : ""}{rating} Rating
             </p>
           </div>
         </div>
@@ -60,7 +93,7 @@ export const MovieCard = ({
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 };

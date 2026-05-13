@@ -11,7 +11,6 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { MOCK_HERO_SLIDES } from "@/lib/mock-data";
 import { HeroSlide } from "@/types/types";
 
 // TODO: fetch from backend → GET /api/movie?filter=featured&limit=5
@@ -99,7 +98,7 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
   );
 }
 
-export function HeroCarousel() {
+export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
@@ -110,6 +109,18 @@ export function HeroCarousel() {
     api.on("select", () => setCurrent(api.selectedScrollSnap()));
   }, [api]);
 
+  if (slides.length === 0) {
+    return (
+      <section className="container mx-auto px-6 lg:px-12 py-24">
+        <div className="min-h-[55vh] border border-border bg-card/30 flex items-center justify-center text-center">
+          <p className="text-xs font-black uppercase tracking-[0.35em] text-muted-foreground">
+            No featured movies available
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <div className="relative container mx-auto px-6 lg:px-12">
       <Carousel
@@ -119,7 +130,7 @@ export function HeroCarousel() {
         className="w-full"
       >
         <CarouselContent>
-          {MOCK_HERO_SLIDES.map((slide) => (
+          {slides.map((slide) => (
             <CarouselItem key={slide.id}>
               <HeroSlideContent slide={slide} />
             </CarouselItem>
@@ -145,7 +156,7 @@ export function HeroCarousel() {
 
       {/* Pagination dots */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-        {MOCK_HERO_SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => api?.scrollTo(i)}
