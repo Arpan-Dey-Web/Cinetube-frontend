@@ -1,15 +1,36 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
-import { MOCK_ADMIN_MOVIES, MOCK_USER_REVIEWS } from "@/lib/mock-data";
+import { apiClient } from "@/shared/api/client";
+import type { Review } from "@/types/types";
+import { useEffect, useMemo, useState } from "react";
 
 export default function DashboardReviewsPage() {
-  const approved = MOCK_USER_REVIEWS.filter((review) => review.status === "APPROVED");
-  const pending = MOCK_USER_REVIEWS.filter((review) => review.status === "PENDING");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const approved = useMemo(
+    () => reviews.filter((review) => review.status === "APPROVED"),
+    [reviews],
+  );
+  const pending = useMemo(
+    () => reviews.filter((review) => review.status === "PENDING"),
+    [reviews],
+  );
+
+  useEffect(() => {
+    apiClient
+      .get<Review[]>("/review", {
+        query: { userId: "me", status: "ALL" },
+        cache: "no-store",
+      })
+      .then((response) => setReviews(response.data))
+      .catch(() => setReviews([]));
+  }, []);
 
   return (
     <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-3">
         {[
-          { label: "Total Reviews", value: MOCK_USER_REVIEWS.length },
+          { label: "Total Reviews", value: reviews.length },
           { label: "Approved", value: approved.length },
           { label: "Pending", value: pending.length },
         ].map((item) => (
@@ -29,12 +50,11 @@ export default function DashboardReviewsPage() {
           My Reviews
         </h1>
         <div className="mt-6 space-y-4">
-          {MOCK_USER_REVIEWS.map((review) => {
-            const movieTitle =
-              MOCK_ADMIN_MOVIES.find((movie) => movie.id === review.movieId)?.title ??
-              review.movieId;
-
-            return (
+          {reviews.length === 0 ? (
+            <div className="rounded-[1rem] border border-border bg-background/70 p-8 text-center text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">
+              No reviews yet
+            </div>
+          ) : reviews.map((review) => (
               <div
                 key={review.id}
                 className="rounded-[1rem] border border-border bg-background/70 p-5"
@@ -42,7 +62,7 @@ export default function DashboardReviewsPage() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
                     <p className="text-lg font-black uppercase tracking-tight text-foreground">
-                      {movieTitle}
+                      Movie {review.movieId.slice(-6)}
                     </p>
                     <p className="mt-1 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
                       Submitted {new Date(review.createdAt).toLocaleDateString()}
@@ -57,8 +77,7 @@ export default function DashboardReviewsPage() {
                   {review.comment}
                 </p>
               </div>
-            );
-          })}
+          ))}
         </div>
       </div>
     </div>

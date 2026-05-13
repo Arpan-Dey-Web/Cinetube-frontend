@@ -1,6 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import EditMovieDetails from "@/components/modules/Dashboard/EditMovieDetails";
+import EditMovieDetails from "@/features/dashboard/components/Dashboard/EditMovieDetails";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { BASE_URL } from "@/services/modules/movie/movie.service";
+import { BASE_URL } from "@/features/movie/api/api";
 import {
   Edit2,
   Trash2,
@@ -86,11 +86,12 @@ export default function AdminMoviesPage() {
   const handleUpdateMovie = async () => {
     if (!selectedMovie) return;
     setIsUpdating(true);
-
+    console.log("selected Movie", selectedMovie);
     try {
-      const res = await fetch(`${BASE_URL}/movie/${selectedMovie.id}`, {
+      const res = await fetch(`${BASE_URL}/movie/update-movie/${selectedMovie.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(selectedMovie),
       });
 
@@ -125,7 +126,7 @@ export default function AdminMoviesPage() {
         </h1>
       </div>
 
-      <div className="overflow-hidden rounded-[1.5rem] border border-border bg-card/20">
+      <div className="overflow-hidden rounded-3xl border border-border bg-card/20">
         <div className="grid grid-cols-[1.4fr_0.8fr_0.6fr_0.5fr_0.6fr_0.8fr] gap-4 border-b border-border px-6 py-4 text-[10px] font-black uppercase tracking-[0.35em] text-muted-foreground">
           <span>Title</span>
           <span>Genre</span>
@@ -192,7 +193,7 @@ export default function AdminMoviesPage() {
       </div>
 
       {/* EDIT DIALOG - Widened to 5xl */}
-  
+
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-5xl w-[95vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -205,195 +206,196 @@ export default function AdminMoviesPage() {
             <div className="space-y-6 py-6">
               <EditMovieDetails movie={selectedMovie} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Left Column: Basic Info */}
-              <div className="space-y-6">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground border-l-2 border-primary pl-3">
-                  General Information
-                </h3>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Movie Title</Label>
-                    <Input
-                      value={selectedMovie.title}
-                      onChange={(e) =>
-                        setSelectedMovie({
-                          ...selectedMovie,
-                          title: e.target.value,
-                        })
-                      }
-                      className="bg-background/50"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
+                {/* Left Column: Basic Info */}
+                <div className="space-y-6">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground border-l-2 border-primary pl-3">
+                    General Information
+                  </h3>
+                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Director</Label>
+                      <Label>Movie Title</Label>
                       <Input
-                        value={selectedMovie.director}
+                        value={selectedMovie.title}
                         onChange={(e) =>
                           setSelectedMovie({
                             ...selectedMovie,
-                            director: e.target.value,
+                            title: e.target.value,
                           })
                         }
                         className="bg-background/50"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label>Release Year</Label>
-                      <Input
-                        type="number"
-                        value={selectedMovie.year}
-                        onChange={(e) =>
-                          setSelectedMovie({
-                            ...selectedMovie,
-                            year: e.target.value,
-                          })
-                        }
-                        className="bg-background/50"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Genres (comma separated)</Label>
-                    <Input
-                      value={selectedMovie.genres?.join(", ")}
-                      onChange={(e) =>
-                        setSelectedMovie({
-                          ...selectedMovie,
-                          genres: e.target.value
-                            .split(", ")
-                            .filter((g) => g !== ""),
-                        })
-                      }
-                      className="bg-background/50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Textarea
-                      rows={6}
-                      value={selectedMovie.description}
-                      onChange={(e) =>
-                        setSelectedMovie({
-                          ...selectedMovie,
-                          description: e.target.value,
-                        })
-                      }
-                      className="bg-background/50 resize-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Assets & Status */}
-              <div className="space-y-6">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground border-l-2 border-primary pl-3">
-                  Media Assets & Links
-                </h3>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <ImageIcon className="w-3 h-3 text-primary" /> Poster URL
-                    </Label>
-                    <Input
-                      value={selectedMovie.posterUrl}
-                      onChange={(e) =>
-                        setSelectedMovie({
-                          ...selectedMovie,
-                          posterUrl: e.target.value,
-                        })
-                      }
-                      className="bg-background/50 font-mono text-xs"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <ImageIcon className="w-3 h-3 text-primary" /> Backdrop
-                      URL
-                    </Label>
-                    <Input
-                      value={selectedMovie.backdropUrl}
-                      onChange={(e) =>
-                        setSelectedMovie({
-                          ...selectedMovie,
-                          backdropUrl: e.target.value,
-                        })
-                      }
-                      className="bg-background/50 font-mono text-xs"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Video className="w-3 h-3 text-primary" /> Trailer URL
-                    </Label>
-                    <Input
-                      value={selectedMovie.trailerUrl}
-                      onChange={(e) =>
-                        setSelectedMovie({
-                          ...selectedMovie,
-                          trailerUrl: e.target.value,
-                        })
-                      }
-                      className="bg-background/50 font-mono text-xs"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Globe className="w-3 h-3 text-primary" /> Streaming URL
-                    </Label>
-                    <Input
-                      value={selectedMovie.streamingUrl}
-                      onChange={(e) =>
-                        setSelectedMovie({
-                          ...selectedMovie,
-                          streamingUrl: e.target.value,
-                        })
-                      }
-                      className="bg-background/50 font-mono text-xs"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
-                    <div className="space-y-2">
-                      <Label>Access Status</Label>
-                      <Select
-                        value={selectedMovie.status}
-                        onValueChange={(val) =>
-                          setSelectedMovie({
-                            ...selectedMovie,
-                            status: val === "PREMIUM" ? "PREMIUM" : "FREE",
-                          })
-                        }
-                      >
-                        <SelectTrigger className="bg-background/50">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="FREE">FREE</SelectItem>
-                          <SelectItem value="PREMIUM">PREMIUM</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex flex-col justify-end">
-                      <div className="flex items-center justify-between p-2.5 border rounded-md bg-muted/20 border-border/50">
-                        <Label className="text-xs font-bold uppercase">
-                          Published
-                        </Label>
-                        <Switch
-                          checked={selectedMovie.isPublished}
-                          onCheckedChange={(checked) =>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Director</Label>
+                        <Input
+                          value={selectedMovie.director}
+                          onChange={(e) =>
                             setSelectedMovie({
                               ...selectedMovie,
-                              isPublished: checked,
+                              director: e.target.value,
                             })
                           }
+                          className="bg-background/50"
                         />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Release Year</Label>
+                        <Input
+                          type="number"
+                          value={selectedMovie.year}
+                          onChange={(e) =>
+                            setSelectedMovie({
+                              ...selectedMovie,
+                              year: e.target.value,
+                            })
+                          }
+                          className="bg-background/50"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Genres (comma separated)</Label>
+                      <Input
+                        value={selectedMovie.genres?.join(", ")}
+                        onChange={(e) =>
+                          setSelectedMovie({
+                            ...selectedMovie,
+                            genres: e.target.value
+                              .split(", ")
+                              .filter((g) => g !== ""),
+                          })
+                        }
+                        className="bg-background/50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Description</Label>
+                      <Textarea
+                        rows={6}
+                        value={selectedMovie.description}
+                        onChange={(e) =>
+                          setSelectedMovie({
+                            ...selectedMovie,
+                            description: e.target.value,
+                          })
+                        }
+                        className="bg-background/50 resize-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column: Assets & Status */}
+                <div className="space-y-6">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground border-l-2 border-primary pl-3">
+                    Media Assets & Links
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <ImageIcon className="w-3 h-3 text-primary" /> Poster
+                        URL
+                      </Label>
+                      <Input
+                        value={selectedMovie.posterUrl}
+                        onChange={(e) =>
+                          setSelectedMovie({
+                            ...selectedMovie,
+                            posterUrl: e.target.value,
+                          })
+                        }
+                        className="bg-background/50 font-mono text-xs"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <ImageIcon className="w-3 h-3 text-primary" /> Backdrop
+                        URL
+                      </Label>
+                      <Input
+                        value={selectedMovie.backdropUrl}
+                        onChange={(e) =>
+                          setSelectedMovie({
+                            ...selectedMovie,
+                            backdropUrl: e.target.value,
+                          })
+                        }
+                        className="bg-background/50 font-mono text-xs"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Video className="w-3 h-3 text-primary" /> Trailer URL
+                      </Label>
+                      <Input
+                        value={selectedMovie.trailerUrl}
+                        onChange={(e) =>
+                          setSelectedMovie({
+                            ...selectedMovie,
+                            trailerUrl: e.target.value,
+                          })
+                        }
+                        className="bg-background/50 font-mono text-xs"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Globe className="w-3 h-3 text-primary" /> Streaming URL
+                      </Label>
+                      <Input
+                        value={selectedMovie.streamingUrl}
+                        onChange={(e) =>
+                          setSelectedMovie({
+                            ...selectedMovie,
+                            streamingUrl: e.target.value,
+                          })
+                        }
+                        className="bg-background/50 font-mono text-xs"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
+                      <div className="space-y-2">
+                        <Label>Access Status</Label>
+                        <Select
+                          value={selectedMovie.status}
+                          onValueChange={(val) =>
+                            setSelectedMovie({
+                              ...selectedMovie,
+                              status: val === "PREMIUM" ? "PREMIUM" : "FREE",
+                            })
+                          }
+                        >
+                          <SelectTrigger className="bg-background/50">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="FREE">FREE</SelectItem>
+                            <SelectItem value="PREMIUM">PREMIUM</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex flex-col justify-end">
+                        <div className="flex items-center justify-between p-2.5 border rounded-md bg-muted/20 border-border/50">
+                          <Label className="text-xs font-bold uppercase">
+                            Published
+                          </Label>
+                          <Switch
+                            checked={selectedMovie.isPublished}
+                            onCheckedChange={(checked) =>
+                              setSelectedMovie({
+                                ...selectedMovie,
+                                isPublished: checked,
+                              })
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
             </div>
           )}
 

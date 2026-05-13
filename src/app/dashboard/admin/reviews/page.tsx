@@ -1,7 +1,23 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
-import { MOCK_ADMIN_REVIEWS } from "@/lib/mock-data";
+import { apiClient } from "@/shared/api/client";
+import type { Review } from "@/types/types";
+import { useEffect, useState } from "react";
 
 export default function AdminReviewsPage() {
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    apiClient
+      .get<Review[]>("/review", {
+        query: { status: "PENDING", limit: 20 },
+        cache: "no-store",
+      })
+      .then((response) => setReviews(response.data))
+      .catch(() => setReviews([]));
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="border-b border-border pb-6">
@@ -14,7 +30,11 @@ export default function AdminReviewsPage() {
       </div>
 
       <div className="space-y-4">
-        {MOCK_ADMIN_REVIEWS.map((review) => (
+        {reviews.length === 0 ? (
+          <div className="border border-border bg-card/20 p-8 text-center text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">
+            No pending reviews
+          </div>
+        ) : reviews.map((review) => (
           <div
             key={review.id}
             className="rounded-[1.5rem] border border-border bg-card/20 p-6"

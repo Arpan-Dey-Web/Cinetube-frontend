@@ -1,8 +1,8 @@
-import { AuthProvider } from "@/provider/auth-provider";
-import { DashboardSidebar } from "@/components/modules/Dashboard/DashboardSidebar";
+import { AuthProvider } from "@/providers/auth-provider";
+import { DashboardSidebar } from "@/features/dashboard/components/Dashboard/DashboardSidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { DashboardTopbar } from "@/components/modules/Dashboard/DashboardTopbar";
+import { DashboardTopbar } from "@/features/dashboard/components/Dashboard/DashboardTopbar";
 
 export default function DashboardLayout({
   children,

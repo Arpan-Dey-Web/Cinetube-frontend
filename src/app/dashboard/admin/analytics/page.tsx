@@ -1,8 +1,20 @@
-import { ActivityChart } from "@/components/modules/Dashboard/ActivityChart";
-import { GenreDonutChart } from "@/components/modules/Dashboard/GenreDonutChart";
-import { MOCK_DASHBOARD_STATS } from "@/lib/mock-data";
+"use client";
+
+import { ActivityChart } from "@/features/dashboard/components/Dashboard/ActivityChart";
+import { GenreDonutChart } from "@/features/dashboard/components/Dashboard/GenreDonutChart";
+import { dashboardService, DashboardStats } from "@/features/dashboard/api/api";
+import { useEffect, useState } from "react";
 
 export default function AdminAnalyticsPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+
+  useEffect(() => {
+    dashboardService
+      .getAdminDashboardStats()
+      .then(setStats)
+      .catch(() => setStats(null));
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="border-b border-border pb-6">
@@ -16,10 +28,10 @@ export default function AdminAnalyticsPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Revenue", value: `$${MOCK_DASHBOARD_STATS.totalRevenue}` },
-          { label: "Pending Reviews", value: MOCK_DASHBOARD_STATS.pendingReviews },
-          { label: "Active Today", value: MOCK_DASHBOARD_STATS.activeUsersToday },
-          { label: "Premium Users", value: MOCK_DASHBOARD_STATS.premiumUsers },
+          { label: "Revenue", value: `$${stats?.revenue ?? 0}` },
+          { label: "Pending Reviews", value: stats?.pendingReviewCount ?? 0 },
+          { label: "Total Users", value: stats?.userCount ?? 0 },
+          { label: "Premium Users", value: stats?.premiumUserCount ?? 0 },
         ].map((item) => (
           <div key={item.label} className="border border-border bg-card/20 p-5">
             <p className="text-[9px] font-black uppercase tracking-[0.35em] text-muted-foreground">

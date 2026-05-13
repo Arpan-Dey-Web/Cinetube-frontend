@@ -1,13 +1,14 @@
 "use client";
-import { useAuth } from "@/provider/auth-provider";
-import { OverviewCards } from "@/components/modules/Dashboard/OverviewCards";
-import { ActivityChart } from "@/components/modules/Dashboard/ActivityChart";
-import { GenreDonutChart } from "@/components/modules/Dashboard/GenreDonutChart";
-import { RecentActivityTable } from "@/components/modules/Dashboard/RecentActivityTable";
+import { useAuth } from "@/providers/auth-provider";
+import { OverviewCards } from "@/features/dashboard/components/Dashboard/OverviewCards";
+import { ActivityChart } from "@/features/dashboard/components/Dashboard/ActivityChart";
+import { GenreDonutChart } from "@/features/dashboard/components/Dashboard/GenreDonutChart";
+import { RecentActivityTable } from "@/features/dashboard/components/Dashboard/RecentActivityTable";
 import { LayoutDashboard } from "lucide-react";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+
   const isAdmin = user?.role === "ADMIN";
 
   return (

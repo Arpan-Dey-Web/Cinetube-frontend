@@ -1,8 +1,22 @@
+"use client";
+
 import Link from "next/link";
-import { MovieCard } from "@/components/modules/HomePage/MovieCard";
-import { MOCK_USER_WATCHLIST } from "@/lib/mock-data";
+import { MovieCard } from "@/features/home/components/MovieCard";
+import {
+  getMyWatchlist,
+  WatchlistEntry,
+} from "@/features/watchlist/api/queries";
+import { useEffect, useState } from "react";
 
 export default function DashboardWatchlistPage() {
+  const [watchlist, setWatchlist] = useState<WatchlistEntry[]>([]);
+
+  useEffect(() => {
+    getMyWatchlist()
+      .then(setWatchlist)
+      .catch(() => setWatchlist([]));
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="flex items-end justify-between border-b border-border pb-6">
@@ -15,12 +29,12 @@ export default function DashboardWatchlistPage() {
           </h1>
         </div>
         <p className="text-[10px] font-black uppercase tracking-[0.35em] text-muted-foreground">
-          {MOCK_USER_WATCHLIST.length} titles saved
+          {watchlist.length} titles saved
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-4">
-        {MOCK_USER_WATCHLIST.map((movie) => (
+        {watchlist.map(({ movie }) => (
           <div key={movie.id} className="space-y-4">
             <MovieCard
               id={movie.id}
