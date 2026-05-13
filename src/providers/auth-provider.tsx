@@ -11,7 +11,7 @@ import { authClient } from "@/lib/auth-client";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-// 1. Define the User type to match your Prisma + Better Auth
+
 interface User {
   id: string;
   name: string;
@@ -35,12 +35,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  // Initialize as true so the app knows we are checking the session on boot
+
   const [isPending, setIsPending] = useState(true);
 
   const refreshSession = async () => {
     try {
       const { data } = await authClient.getSession();
+
 
       if (data && data?.user) {
         const sessionUser = data.user as unknown as User;
@@ -48,11 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const profileRes = await fetch(`${API_URL}/user/profile`, {
             credentials: "include",
-            cache: "no-store",
+            cache: "force-cache",
           });
+          // console.log(profileRes);
 
           if (profileRes.ok) {
             const profileJson = await profileRes.json();
+            console.log(profileJson);
             setUser(profileJson.data as User);
           } else {
             setUser(sessionUser);
