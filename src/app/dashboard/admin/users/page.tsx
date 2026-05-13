@@ -1,11 +1,7 @@
-
-export const Users = () => {
-    return (
-        <div>
-            <h1 className="text-5xl  font-bold mb-8">
-                Users Page
-            </h1>
-
-        </div>
-    )
+export default function AdminUsersPage() {
+  return (
+    <div>
+      <h1 className="mb-8 text-5xl font-bold">Users Page</h1>
+    </div>
+  );
 }
