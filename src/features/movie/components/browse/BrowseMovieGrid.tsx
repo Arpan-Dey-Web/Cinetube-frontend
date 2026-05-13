@@ -1,7 +1,7 @@
 "use client";
 
 import { SlidersHorizontal } from "lucide-react";
-import { MovieCard } from "@/components/modules/HomePage/MovieCard";
+import { MovieCard } from "@/features/home/components/MovieCard";
 import { BrowseFiltersPanel } from "./BrowseFiltersPanel";
 import type { BrowseMovieGridProps } from "./browse-movie-grid.types";
 import { BrowseMovieGridSkeleton } from "./BrowseMovieGridSkeleton";

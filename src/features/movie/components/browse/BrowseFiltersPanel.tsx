@@ -2,7 +2,7 @@
 import { X, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { ALL_GENRES, ALL_PLATFORMS } from "@/lib/mock-data";
+import { ALL_GENRES, ALL_PLATFORMS } from "@/constants/catalog";
 import { DEFAULT_FILTERS, type FiltersState } from "./filter-utils";
 
 interface Props {

@@ -1,4 +1,4 @@
-import type { MoviesListMeta } from "@/services/modules/movie/movie.service";
+import type { MoviesListMeta } from "@/features/movie/api/api";
 import { Movie } from "@/types/types";
 import type { FiltersState } from "./filter-utils";
 
