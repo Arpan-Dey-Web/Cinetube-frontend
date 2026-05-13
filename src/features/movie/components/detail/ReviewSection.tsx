@@ -17,11 +17,11 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/provider/auth-provider";
+import { useAuth } from "@/providers/auth-provider";
 import {
   createReviewRequest,
   toggleReviewLikeRequest,
-} from "@/services/modules/review/review.client";
+} from "@/features/review/api/mutations";
 import type { Review } from "@/types/types";
 
 function updateReviewLikesInTree(

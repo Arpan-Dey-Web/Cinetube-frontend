@@ -1,4 +1,4 @@
-import { MovieCard } from "@/components/modules/HomePage/MovieCard";
+import { MovieCard } from "@/features/home/components/MovieCard";
 import { Movie } from "@/types/types";
 
 export function RelatedTitlesSection({ movies }: { movies: Movie[] }) {

@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CardElement,  useElements, useStripe } from "@stripe/react-stripe-js";
-import { createPaymentIntent } from "@/services/modules/payment/payment.client";
+import { createPaymentIntent } from "@/features/payment/api/mutations";
 import { Button } from "@/components/ui/button";
 
 export const MoviePurchaseModal = ({

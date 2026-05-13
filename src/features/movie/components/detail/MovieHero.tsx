@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/provider/auth-provider";
-import { toggleWatchlistRequest } from "@/services/modules/watchlist/watchlist.client";
+import { useAuth } from "@/providers/auth-provider";
+import { toggleWatchlistRequest } from "@/features/watchlist/api/mutations";
 import type { Movie, Review } from "@/types/types";
 
 interface MovieData extends Movie {
