@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   Clapperboard,
@@ -13,8 +13,8 @@ import {
   Ticket,
   type LucideIcon,
 } from "lucide-react";
-import { MovieCard } from "@/components/modules/HomePage/MovieCard";
-import { MOVIE_CATALOG } from "@/lib/movie-catalog";
+import { MovieCard } from "@/features/home/components/MovieCard";
+import { apiClient } from "@/shared/api/client";
 import { Movie } from "@/types/types";
 
 const MOOD_FILTERS = [
@@ -86,12 +86,6 @@ function parseDurationMinutes(duration: string) {
   const minutes = Number(match[2] ?? 0);
 
   return hours * 60 + minutes;
-}
-
-function pickMovies(ids: string[]) {
-  return ids
-    .map((id) => MOVIE_CATALOG.find((movie) => movie.id === id) ?? null)
-    .filter((movie): movie is Movie => movie !== null);
 }
 
 function ArchiveStatCard({
@@ -184,19 +178,27 @@ export default function ArchivePage() {
   const [search, setSearch] = useState("");
   const [selectedMood, setSelectedMood] = useState<MoodFilter>("All Moods");
   const [selectedEra, setSelectedEra] = useState<EraFilter>("All Eras");
+  const [movies, setMovies] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    apiClient
+      .get<Movie[]>("/movie", { query: { limit: 100 }, cache: "no-store" })
+      .then((response) => setMovies(response.data))
+      .catch(() => setMovies([]));
+  }, []);
 
   const featuredMovie = useMemo(
-    () => [...MOVIE_CATALOG].sort((a, b) => b.rating - a.rating)[0] ?? null,
-    [],
+    () => [...movies].sort((a, b) => b.rating - a.rating)[0] ?? null,
+    [movies],
   );
 
   const archiveStats = useMemo(() => {
-    const totalTitles = MOVIE_CATALOG.length;
-    const freeTitles = MOVIE_CATALOG.filter((movie) => movie.status === "FREE").length;
-    const premiumTitles = MOVIE_CATALOG.filter(
+    const totalTitles = movies.length;
+    const freeTitles = movies.filter((movie) => movie.status === "FREE").length;
+    const premiumTitles = movies.filter(
       (movie) => movie.status === "PREMIUM",
     ).length;
-    const directors = new Set(MOVIE_CATALOG.map((movie) => movie.director)).size;
+    const directors = new Set(movies.map((movie) => movie.director)).size;
 
     return [
       {
@@ -224,12 +226,12 @@ export default function ArchivePage() {
         icon: Clapperboard,
       },
     ] as const;
-  }, []);
+  }, [movies]);
 
   const filteredArchive = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    return MOVIE_CATALOG.filter((movie) => {
+    return movies.filter((movie) => {
       if (selectedMood === "Neon Future" && !movie.genres.includes("Sci-Fi")) {
         return false;
       }
@@ -274,38 +276,41 @@ export default function ArchivePage() {
 
       return searchableText.includes(query);
     });
-  }, [search, selectedEra, selectedMood]);
+  }, [movies, search, selectedEra, selectedMood]);
 
   const activeMoodDescription =
     MOOD_FILTERS.find((filter) => filter.label === selectedMood)?.description ?? "";
   const activeEraDescription =
     ERA_FILTERS.find((filter) => filter.label === selectedEra)?.description ?? "";
 
-  const staffPicks = useMemo(() => pickMovies(["t1", "t2", "t3", "n4"]), []);
+  const staffPicks = useMemo(
+    () => [...movies].sort((a, b) => b.rating - a.rating).slice(0, 4),
+    [movies],
+  );
   const recentlyDigitized = useMemo(
     () =>
-      [...MOVIE_CATALOG]
+      [...movies]
         .sort((a, b) => Number(b.year) - Number(a.year) || b.rating - a.rating)
         .slice(0, 4),
-    [],
+    [movies],
   );
   const freeTonight = useMemo(
     () =>
-      MOVIE_CATALOG.filter((movie) => movie.status === "FREE")
+      movies.filter((movie) => movie.status === "FREE")
         .sort((a, b) => b.rating - a.rating)
         .slice(0, 4),
-    [],
+    [movies],
   );
   const directorSpotlight = useMemo(
-    () => MOVIE_CATALOG.filter((movie) => movie.director === "Christopher Nolan"),
-    [],
+    () => movies.filter((movie) => movie.director === featuredMovie?.director),
+    [featuredMovie?.director, movies],
   );
   const longFormStories = useMemo(
     () =>
-      MOVIE_CATALOG.filter((movie) => parseDurationMinutes(movie.duration) >= 160)
+      movies.filter((movie) => parseDurationMinutes(movie.duration) >= 160)
         .sort((a, b) => b.rating - a.rating)
         .slice(0, 4),
-    [],
+    [movies],
   );
 
   return (
@@ -513,11 +518,10 @@ export default function ArchivePage() {
                       <button
                         key={filter.label}
                         onClick={() => setSelectedMood(filter.label)}
-                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] transition-colors ${
-                          active
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] transition-colors ${active
                             ? "bg-primary text-primary-foreground"
                             : "border border-border text-muted-foreground hover:border-primary hover:text-foreground"
-                        }`}
+                          }`}
                       >
                         {filter.label}
                       </button>
@@ -537,11 +541,10 @@ export default function ArchivePage() {
                       <button
                         key={filter.label}
                         onClick={() => setSelectedEra(filter.label)}
-                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] transition-colors ${
-                          active
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] transition-colors ${active
                             ? "bg-foreground text-background"
                             : "border border-border text-muted-foreground hover:border-primary hover:text-foreground"
-                        }`}
+                          }`}
                       >
                         {filter.label}
                       </button>

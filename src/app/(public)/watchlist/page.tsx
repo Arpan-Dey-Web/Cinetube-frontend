@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Bookmark, Clock, PlayCircle, Trash2 } from "lucide-react";
-import { MovieCard } from "@/components/modules/HomePage/MovieCard";
+import { MovieCard } from "@/features/home/components/MovieCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/provider/auth-provider";
-import { toggleWatchlistRequest } from "@/services/modules/watchlist/watchlist.client";
+import { useAuth } from "@/providers/auth-provider";
+import { toggleWatchlistRequest } from "@/features/watchlist/api/mutations";
 import {
   getMyWatchlist,
   type WatchlistEntry,
-} from "@/services/modules/watchlist/watchlist.service";
+} from "@/features/watchlist/api/queries";
 
 const formatAddedDate = (value: string) =>
   new Intl.DateTimeFormat("en-US", {
@@ -179,7 +179,9 @@ export default function WatchListPage() {
                   rating={entry.movie.rating}
                   year={entry.movie.year}
                   image={entry.movie.posterUrl}
-                  category={entry.movie.genres[0] || entry.movie.platform || "Movie"}
+                  category={
+                    entry.movie.genres[0] || entry.movie.platform || "Movie"
+                  }
                 />
 
                 <Link
