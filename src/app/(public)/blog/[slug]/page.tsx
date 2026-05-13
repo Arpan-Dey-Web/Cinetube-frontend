@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import { MOCK_BLOG_POSTS } from "@/lib/mock-data";
+import { BLOG_POSTS } from "@/constants/blog-posts";
 
 export function generateStaticParams() {
-  return MOCK_BLOG_POSTS.map((post) => ({ slug: post.slug }));
+  return BLOG_POSTS.map((post) => ({ slug: post.slug }));
 }
 
 export default async function BlogDetailsPage({
@@ -14,13 +14,13 @@ export default async function BlogDetailsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = MOCK_BLOG_POSTS.find((entry) => entry.slug === slug);
+  const post = BLOG_POSTS.find((entry) => entry.slug === slug);
 
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = MOCK_BLOG_POSTS.filter((entry) => entry.slug !== slug);
+  const relatedPosts = BLOG_POSTS.filter((entry) => entry.slug !== slug);
 
   return (
     <main className="min-h-screen bg-background">

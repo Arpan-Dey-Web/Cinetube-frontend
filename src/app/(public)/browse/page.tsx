@@ -1,15 +1,15 @@
-import { BrowseMovieGrid } from "@/components/modules/BrowsePage/BrowseMovieGrid";
+import { BrowseMovieGrid } from "@/features/movie/components/browse/BrowseMovieGrid";
 import {
   buildApiQueryFromBrowseSearchParams,
   getInitialBrowseState,
   serializeBrowseUrlParams,
   type BrowseSearchParamsInput,
-} from "@/components/modules/BrowsePage/filter-utils";
+} from "@/features/movie/components/browse/filter-utils";
 import { MOVIE_CATALOG } from "@/lib/movie-catalog";
 import {
   movieService,
   type MoviesListMeta,
-} from "@/services/modules/movie/movie.service";
+} from "@/features/movie/api/api";
 import { Movie } from "@/types/types";
 
 async function getBrowseMovies(rawParams: BrowseSearchParamsInput): Promise<{

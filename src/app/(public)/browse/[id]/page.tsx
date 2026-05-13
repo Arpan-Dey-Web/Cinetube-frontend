@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
-import { RelatedTitlesSection } from "@/components/modules/MoviePage/RelatedTitlesSection";
-import { movieService } from "@/services/modules/movie/movie.service";
-import { getReviewsForMovie } from "@/services/modules/review/review.service";
-import { isMovieInWatchlist } from "@/services/modules/watchlist/watchlist.service";
-import { ReviewSection } from "@/components/modules/MoviePage/ReviewSection";
-import { MovieHero } from "@/components/modules/MoviePage/MovieHero";
-import { PaymentReturnNotice } from "@/components/modules/MoviePage/PaymentReturnNotice";
-import { VideoPlayer } from "@/components/modules/MoviePage/VideoPlayer";
-import { MovieSidebar } from "@/components/modules/MoviePage/MovieSidebar";
+import { RelatedTitlesSection } from "@/features/movie/components/detail/RelatedTitlesSection";
+import { movieService } from "@/features/movie/api/api";
+import { getReviewsForMovie } from "@/features/review/api/queries";
+import { isMovieInWatchlist } from "@/features/watchlist/api/queries";
+import { ReviewSection } from "@/features/movie/components/detail/ReviewSection";
+import { MovieHero } from "@/features/movie/components/detail/MovieHero";
+import { PaymentReturnNotice } from "@/features/movie/components/detail/PaymentReturnNotice";
+import { VideoPlayer } from "@/features/movie/components/detail/VideoPlayer";
+import { MovieSidebar } from "@/features/movie/components/detail/MovieSidebar";
 import { notFound } from "next/navigation";
 import type { Movie } from "@/types/types";
 

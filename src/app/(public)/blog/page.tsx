@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { MOCK_BLOG_POSTS } from "@/lib/mock-data";
+import { BLOG_POSTS } from "@/constants/blog-posts";
 
 export default function BlogPage() {
-  const [featured, ...posts] = MOCK_BLOG_POSTS;
+  const [featured, ...posts] = BLOG_POSTS;
 
   return (
     <main className="min-h-screen bg-background">
