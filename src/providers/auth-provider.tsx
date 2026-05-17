@@ -7,7 +7,7 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/features/auth/utils/auth-session";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 

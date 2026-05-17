@@ -1,4 +1,4 @@
-import { Movie, Review } from "@/types/types";
+import { Movie, Review } from "@/types";
 
 export const MOVIE_CATALOG: Movie[] = [];
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   FOOTER_SECTIONS,
   SOCIAL_LINKS,
-} from "@/lib/site-content";
+} from "@/constants/site-content";
 
 const SOCIAL_ICONS = {
   Facebook: FaFacebookF,

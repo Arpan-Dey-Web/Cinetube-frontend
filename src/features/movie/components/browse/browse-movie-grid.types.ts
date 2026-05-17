@@ -1,5 +1,5 @@
 import type { MoviesListMeta } from "@/features/movie/api/api";
-import { Movie } from "@/types/types";
+import { Movie } from "@/types";
 import type { FiltersState } from "./filter-utils";
 
 export type BrowseMovieGridProps = {

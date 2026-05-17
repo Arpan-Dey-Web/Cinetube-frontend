@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Star, ChevronRight } from "lucide-react";
 import { apiClient } from "@/shared/api/client";
-import type { Review } from "@/types/types";
+import type { Review } from "@/types";
 
 const STATUS_COLORS: Record<string, string> = {
   APPROVED: "bg-green-500/10 text-green-600 border-green-500/30",

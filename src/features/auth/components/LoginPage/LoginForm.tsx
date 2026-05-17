@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useTransition, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
-import { DEMO_ACCOUNTS } from "@/lib/site-content";
+import { authClient } from "@/features/auth/utils/auth-session";
+import { DEMO_ACCOUNTS } from "@/constants/site-content";
 import { AuthSocialButtons } from "../AuthSocialButtons";
 
 export default function LoginForm() {
@@ -55,11 +55,10 @@ export default function LoginForm() {
     <div className="w-full max-w-md mx-auto">
       {serverMessage && (
         <div
-          className={`p-3 mb-4 text-[10px] font-bold uppercase tracking-widest border ${
-            serverMessage.includes("successful")
-              ? "border-green-500 text-green-500"
-              : "border-destructive text-destructive"
-          }`}
+          className={`p-3 mb-4 text-[10px] font-bold uppercase tracking-widest border ${serverMessage.includes("successful")
+            ? "border-green-500 text-green-500"
+            : "border-destructive text-destructive"
+            }`}
         >
           {serverMessage}
         </div>

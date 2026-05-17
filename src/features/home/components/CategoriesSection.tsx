@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { movieService } from "@/features/movie/api/api";
-import type { Category } from "@/types/types";
+import type { Category } from "@/types";
 
 const genreImage =
   "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1740";

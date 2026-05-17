@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Star, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { movieService } from "@/features/movie/api/api";
-import type { Movie } from "@/types/types";
+import type { Movie } from "@/types";
 
 export async function TrendingSection() {
   let movies: Movie[] = [];

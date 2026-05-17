@@ -3,7 +3,7 @@ import { useTransition, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/features/auth/utils/auth-session";
 import { AuthSocialButtons } from "../AuthSocialButtons";
 
 const registerSchema = z.object({
@@ -82,9 +82,9 @@ export default function RegisterForm() {
       {serverMessage && (
         <div
           className={`p-3 mb-4 text-[10px] font-bold uppercase tracking-widest border ${serverMessage.includes("success") ||
-              serverMessage.includes("Redirecting")
-              ? "border-green-500 text-green-500"
-              : "border-destructive text-destructive"
+            serverMessage.includes("Redirecting")
+            ? "border-green-500 text-green-500"
+            : "border-destructive text-destructive"
             }`}
         >
           {serverMessage}

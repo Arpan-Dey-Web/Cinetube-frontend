@@ -1,5 +1,5 @@
 import { MovieCard } from "@/features/home/components/MovieCard";
-import { Movie } from "@/types/types";
+import { Movie } from "@/types";
 
 export function RelatedTitlesSection({ movies }: { movies: Movie[] }) {
   if (movies.length === 0) {

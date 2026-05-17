@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/features/auth/utils/auth-session";
 
 const PROVIDERS = [
   { id: "google", label: "Google", icon: FaGoogle },

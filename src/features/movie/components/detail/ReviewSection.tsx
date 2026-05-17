@@ -22,7 +22,7 @@ import {
   createReviewRequest,
   toggleReviewLikeRequest,
 } from "@/features/review/api/mutations";
-import type { Review } from "@/types/types";
+import type { Review } from "@/types";
 
 function updateReviewLikesInTree(
   list: Review[],

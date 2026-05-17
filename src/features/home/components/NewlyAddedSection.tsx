@@ -1,6 +1,6 @@
 import { MovieCard } from "./MovieCard";
 import { movieService } from "@/features/movie/api/api";
-import type { Movie } from "@/types/types";
+import type { Movie } from "@/types";
 
 export async function NewlyAddedSection() {
   let movies: Movie[] = [];

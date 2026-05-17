@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { PUBLIC_NAV_LINKS } from "@/lib/site-content";
+import { PUBLIC_NAV_LINKS } from "@/constants/site-content";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { LogoutButton } from "@/components/ui/LogoutButton";
 

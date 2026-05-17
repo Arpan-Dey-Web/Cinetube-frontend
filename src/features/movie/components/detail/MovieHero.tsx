@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { toggleWatchlistRequest } from "@/features/watchlist/api/mutations";
-import type { Movie, Review } from "@/types/types";
+import type { Movie, Review } from "@/types";
 
 interface MovieData extends Movie {
   backdrop: string;

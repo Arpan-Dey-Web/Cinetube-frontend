@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/api/client";
-import type { Movie } from "@/types/types";
+import type { Movie } from "@/types";
 
 export type MovieMutationPayload = Partial<Omit<Movie, "id" | "reviews">>;
 

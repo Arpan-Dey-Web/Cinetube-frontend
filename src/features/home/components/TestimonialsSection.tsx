@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Quote } from "lucide-react";
-import type { Testimonial } from "@/types/types";
+import type { Testimonial } from "@/types";
 
 const TESTIMONIALS: Testimonial[] = [
   {

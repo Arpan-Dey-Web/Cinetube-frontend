@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/api/client";
-import { Category, Movie } from "@/types/types";
+import { Category, Movie } from "@/types";
 
 export const BASE_URL =
     process.env.NEXT_PUBLIC_API_URL ||

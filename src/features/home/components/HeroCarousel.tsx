@@ -11,7 +11,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { HeroSlide } from "@/types/types";
+import { HeroSlide } from "@/types";
 
 // TODO: fetch from backend → GET /api/movie?filter=featured&limit=5
 
